@@ -164,7 +164,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 \chapter[Uvod]{Uvod}
 \thispagestyle{plain}
 \section[Osnove]{Osnove}
-Još od davnina ljudi su se {\latin \cite{campbell2002deep}} nadmetali u igranju igara poput šaha, 
+Još od davnina ljudi su se nadmetali u igranju igara poput šaha, 
 kineske igre {\latin Go}, {\latin Backgammon} itd. 
 U mnogim kulturama oni koji su bili najbolji u ovim igrama 
 bili su izuzetno poštovani, pa bi neki ljudi posvećivali čak i 
@@ -176,7 +176,7 @@ igrača gotovo nemoguće. \\
 Ovaj izazov mučio je matematičare stotinama godina i ostao je 
 neprevaziđen sve do 1997. godine kada je konačno računar 
 {\latin (Deep blue)} prvi put pobedio najboljeg šahistu tog 
-vremena Garija Kasparova {\latin (Campbell et al., 2002)}. 
+vremena Garija Kasparova {\latin (\cite{campbell2002deep})}. 
 {\latin Deep blue} je koristio alfa-beta algoritam pretrage, 
 heuristike, ekspertsko znanje i specijalni hardver napravljen 
 kako bi probao što veći broj poteza po sekundi. 
@@ -189,19 +189,19 @@ van vrlo specijalizovanog domena za koji su napravljene.\\
 Velika prekretnica došla je sa razvojem neuronskih mreža, 
 učenja sa podsticajem i hardvera. Sve ovo omogućilo je da se 
 razviju generalni algoritmi koji bez velike modifikacije mogu 
-naučiti da veoma dobro igraju veliki broj igara {\latin (Mnih et al., 2015)}. 
+naučiti da veoma dobro igraju veliki broj igara {\latin (\cite{mnih2015human})}. 
 Sledeći veliki korak u mašinskom igranju igara došao je sa 
 programom {\latin Alpha Go} koji je 2016. godine pobedio 
 svetskog šampiona Li Sedola u igri Go. {\latin Alpha Go} je 
 koristio učenje sa podsticajem, konvolucione neuronske mreže, 
 Monte Karlo pretragu, takođe delimično je bio treniran na igrama 
-koje su igrali profesionalni Go igrači {\latin (Silver et al., 2017)}. 
+koje su igrali profesionalni Go igrači {\latin (\cite{silver2017mastering})}. 
 Godinu dana kasnije - 2017. godine objavljena je verzija {\latin Alpha Go-a} 
 koja ne koristi ikakvo ekspertsko znanje - {\latin Alpha Go Zero}, 
 koja postiže čak bolji rezultat od verzije trenirane sa ekspertskim 
 igrama. Poslednji veliki napredak je program {\latin AlphaStar} 
 koji igra stratešku video igru {\latin StarCraft II} gde pobeđuje 
-najbolje igrače ove igre {\latin (Vinyals et al., 2019)}.\\
+najbolje igrače ove igre {\latin (\cite{vinyals2019grandmaster})}.\\
 Glavna razlika između metoda korišćenih za rešavanje šaha 
 (alfa-beta pretraga) i savremenih metoda je način kako se 
 igra modeluje. U savremenim metodama učenja sa podsticajem 
@@ -262,7 +262,12 @@ Kada je politika fiksirana, traženje očekivane nagrade koja će biti ostvarena
    	\item $p(s), s \in S_t$ - Verovatnoća da se neka sekvenca dogodi. Ako je data sekvenca $s=(N_0,N_1,N_2,\cdots , N_t)$ onda je $p(s) = T(N_0, N_1)\cdot T(N_1,N_2)\cdots T(N_{t-1},N_{t})$
     \item $R(u,v)$ - Nagrada kada se iz stanja $u$ završi u stanju $v$.
     \item $r(s), s \in S_t$ - Nagrada za datu sekvencu $s$. 
-    \item $r(s) = R(N_0, N_1)+R(N_1,N_2)+ \cdots +R(N_{t-2},N_{t-1})$
+    \[ 
+		\begin{split}
+		r(s) &= R(N_0, N_1)+\gamma R(N_1,N_2) +\gamma^2 R(N_2,N_3) \cdots + \gamma^{t-1} R(N_{t-2},N_{t-1}) \\
+		\gamma &< 1
+		\end{split}
+	\]
     \item $L(u,t)$ - Verovatnoća da se posle $t$ koraka završi u stanju $u$. 
 	\[ 
 		L(u,t) = \sum_{s \in S_{t,u}}p(s)
@@ -286,22 +291,55 @@ Ako definišemo da je $L(t)$ vektorska funkcija, a $T$ matrica možemo prethodnu
 \[ L(t) = L(t-1)T \]
 Kako je $L(0) = L_0$ gde je $L_0$ Verovatnoća da se počne iz svakog stanja. Lako se može pokazati da je:
 \[ L(t) = L_0T^t \]
-\lem $E_r(t) = E_r(t-1) + \sum_{u}\sum_{v}T(u,v)R(u,v)L(u,t)$
+\lem $E_r(t) = E_r(t-1) + \gamma^{t-1}\sum_{u}\sum_{v}T(u,v)R(u,v)L(u,t)$
 \[
 \begin{split}
 	E_r(t) &= \sum_{s \in S_t}p(s)r(s)	\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)(R(s') + R(u,v))\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(\sum_{v}T(u,v)R(s') + \sum_{v}T(u,v)R(u,v))\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s')\sum_{v}T(u,v) + \sum_{v}T(u,v)R(u,v))\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s')\cdot 1 + \sum_{v}T(u,v)R(u,v))\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s') + \sum_{v}T(u,v)R(u,v))\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}\left(p(s')R(s') + p(s')\sum_{v}T(u,v)R(u,v)\right)\\
-	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')R(s') + \sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
-	E_r(t) &= \sum_{s' \in S_{t-1}}p(s')R(s') + \sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
-	E_r(t) &= E_r(t-1) + \sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
-	E_r(t) &= E_r(t-1) + \sum_u \left(\sum_{v}T(u,v)R(u,v) \cdot \sum_{s' \in S_{t-1,u}}p(s')\right)\\
-	E_r(t) &= E_r(t-1) + \sum_u \sum_{v}T(u,v)R(u,v) \cdot L(u,t)\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)(R(s') + \gamma^{t-1} R(u,v))\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(\sum_{v}T(u,v)R(s') + \gamma^{t-1} \sum_{v}T(u,v)R(u,v))\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s')\sum_{v}T(u,v) + \gamma^{t-1} \sum_{v}T(u,v)R(u,v))\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s')\cdot 1 + \gamma^{t-1} \sum_{v}T(u,v)R(u,v))\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')(R(s') + \gamma^{t-1} \sum_{v}T(u,v)R(u,v))\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}\left(p(s')R(s') + p(s')\gamma^{t-1}\sum_{v}T(u,v)R(u,v)\right)\\
+	E_r(t) &= \sum_u \sum_{s' \in S_{t-1,u}}p(s')R(s') + \gamma^{t-1}\sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
+	E_r(t) &= \sum_{s' \in S_{t-1}}p(s')R(s') + \gamma^{t-1}\sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
+	E_r(t) &= E_r(t-1) + \gamma^{t-1}\sum_u \sum_{s' \in S_{t-1,u}}p(s')\sum_{v}T(u,v)R(u,v)\\
+	E_r(t) &= E_r(t-1) + \gamma^{t-1}\sum_u \left(\sum_{v}T(u,v)R(u,v) \cdot \sum_{s' \in S_{t-1,u}}p(s')\right)\\
+	E_r(t) &= E_r(t-1) + \gamma^{t-1}\sum_u \sum_{v}T(u,v)R(u,v) \cdot L(u,t)\\
 \end{split}
+\]
+Dodatno možemo primetiti sledeće:
+\[
+	\sum_u \sum_{v}T(u,v)R(u,v) \cdot L(u,t) = \sum_u L(u,t)\sum_{v}T(u,v)R(u,v)
+\]
+Ukoliko definišemo $L(t)$ kao vektorsku funkciju, tako da je $L(t)_u$ verovatnoća da se u trenutku $t$ bude u stanju $u$ i primetimo da je $\sum_{v}T(u,v)R(u,v)$ konstantan vektor $\vec{c}$.
+Možemo zapisati izraz kao:
+\[
+	E_r(t) = E_r(t-1) + \gamma^{t-1}\vec{L(t)} \cdot \vec{c}
+\]  
+Pa je lako videti da je:
+\[
+	\begin{split}
+	E_r(t) &= \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i)} \cdot \vec{c}\\
+	E_r(t) &= \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i)}
+	\end{split}
+\]
+\medskip
+Za aciklične markovljeve lance, odnosno za aperiodične matrice $T$ izračunavanje $E_r(t)$ za dovoljno veliko $t$ je dovoljno za nalaženje očekivane nagrade.
+Međutim za periodične matrice $T$ je potrebno pokazati da $\lim_{t \to \infty}{E_r(t)}$ postoji.
+\lem $\lim_{t \to \infty}{E_r(t)} = \text{const}$\\
+Ako se u izraz $E_r(t) = \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i-1)}$ zameni definicija za $\vec{L(i)}$ dobija se sledeći izraz:
+\[
+	\begin{split}
+	E_r(t) &= \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L_0}T^{i-1}\\
+	E_r(t) &= \vec{c} \cdot \vec{L_0} \cdot \sum_{i=1}^{t}\gamma^{i-1}T^{i-1}\\
+	\end{split}
+\]
+Uvedimo matricu $A = \gamma T$ i vektor $b = \vec{c}\cdot\vec{L_0}$. Pa je prethodni izraz jednak: \\
+\[
+	\begin{split}
+	E_r(t) &= \vec{b} \cdot \sum_{i=1}^{t}A^t\\
+	\end{split}
 \]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
