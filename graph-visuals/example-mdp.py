@@ -125,7 +125,7 @@ def mdp_under_policy():
     transition_probs, rewards = get_chain()
     show_markov_chain(transition_probs, rewards)
 
-def evaluate_markov_chain(transition_probs, rewards, start_state, max_steps = 100, episode_cnt = 10000, gamma = 0.9):
+def evaluate_markov_chain(transition_probs, rewards, start_state, max_steps = 6, episode_cnt = 10000, gamma = 0.9):
     state_cnt = transition_probs.shape[0]
     total_reward = 0.0
     avg_reward_history = []
@@ -141,7 +141,7 @@ def evaluate_markov_chain(transition_probs, rewards, start_state, max_steps = 10
         avg_reward_history.append(total_reward/(e+1))
     return total_reward / (episode_cnt+1)
 
-def evaluate_markov_chain_as_limit(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100):
+def evaluate_markov_chain_as_limit(transition_probs, rewards, start_state, gamma = 0.9, max_t = 6):
     # Find the probability to endup in each state after time t
     state_cnt = transition_probs.shape[0]
     prob = np.zeros((max_t, state_cnt))
@@ -149,18 +149,41 @@ def evaluate_markov_chain_as_limit(transition_probs, rewards, start_state, gamma
     for t in range(1, max_t):
         prob[t,:] = np.matmul(prob[t-1,:], transition_probs)
 
-    # expected_reward = np.zeros((max_t,state_cnt))
-    # for i in range(1, max_t):
-    #     expected_reward[i] = gamma**i * np.matmul(prob[i-1], np.multiply(rewards, transition_probs)) + np.matmul(np.multiply(prob[i-1], expected_reward[i-1]), transition_probs)
-    # expected_reward = np.matmul(k,expected_reward)
-
     expected_reward = 0.0
     m = np.matmul(np.multiply(transition_probs, rewards), np.ones(state_cnt))
-    for i in range(1, max_t):
+    for i in range(1, max_t+1):
         expected_reward += gamma**(i-1) * np.matmul(prob[i-1], m)
 
     return expected_reward
 
+def recursive_expected_reward(transition_probs, rewards, start_state, gamma, max_t, current_path, current_t = 0):
+    state_cnt = transition_probs.shape[0]
+    if current_t == max_t:
+        p = 1.0
+        r = 0.0
+        for i,s in enumerate(current_path):
+            if i >= 1:
+                prev_s = current_path[i-1]
+                p *= transition_probs[prev_s, s]
+                r += gamma**(i-1) * rewards[prev_s, s]
+        return p * r        
+    elif current_t == 0:
+        current_path[current_t] = start_state
+        return recursive_expected_reward(transition_probs, rewards, start_state, gamma, max_t, current_path, current_t+1)
+    else:
+        expected_reward = 0.0
+        for s in range(state_cnt):
+            current_path[current_t] = s
+            expected_reward += recursive_expected_reward(transition_probs, rewards, s, gamma, max_t, current_path, current_t+1)
+        return expected_reward
+
+
+def evaluate_chain_bruteforce(transition_probs, rewards, start_state, gamma = 0.9, max_t = 6):
+    path = np.zeros(max_t+1, dtype=int)
+    return recursive_expected_reward(transition_probs, rewards, start_state, gamma, max_t+1, path)
+    
+
 transition_probs, rewards = get_random_chain()
+print(evaluate_chain_bruteforce(transition_probs, rewards, 0))
 print(evaluate_markov_chain(transition_probs, rewards, 0))
-print(evaluate_markov_chain_as_limit(transition_probs, rewards, 0))
+print(evaluate_markov_chain_as_limit(transition_probs, rewards, 0)) 
