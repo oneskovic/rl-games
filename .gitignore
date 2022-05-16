@@ -1,0 +1,16 @@
+
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+documents/main.run.xml
+documents/main.synctex.gz
+documents/main.toc
+documents/resenje41.pdf
+documents/test.pdf
+documents/test.run.xml
+documents/test.synctex.gz
+documents/test.tex
