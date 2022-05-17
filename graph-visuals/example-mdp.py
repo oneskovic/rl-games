@@ -156,6 +156,14 @@ def evaluate_markov_chain_as_limit(transition_probs, rewards, start_state, gamma
 
     return expected_reward
 
+def evaluate_markov_chain_closed_form(transition_probs, rewards, start_state, gamma = 0.9, max_t=100):
+    state_cnt = transition_probs.shape[0]
+    l0 = np.zeros(state_cnt)
+    l0[start_state] = 1
+    vec_c = np.multiply(transition_probs, rewards).sum(axis=1)
+    s = np.linalg.inv(np.eye(state_cnt) - gamma*transition_probs)
+    return np.matmul(vec_c,np.matmul(l0,s))
+
 def recursive_expected_reward(transition_probs, rewards, start_state, gamma, max_t, current_path, current_t = 0):
     state_cnt = transition_probs.shape[0]
     if current_t == max_t:
@@ -184,6 +192,7 @@ def evaluate_chain_bruteforce(transition_probs, rewards, start_state, gamma = 0.
     
 
 transition_probs, rewards = get_random_chain()
-print(evaluate_chain_bruteforce(transition_probs, rewards, 0))
-print(evaluate_markov_chain(transition_probs, rewards, 0))
-print(evaluate_markov_chain_as_limit(transition_probs, rewards, 0)) 
+# print(evaluate_chain_bruteforce(transition_probs, rewards, 0))
+# print(evaluate_markov_chain(transition_probs, rewards, 0))
+print(evaluate_markov_chain_as_limit(transition_probs, rewards, 0, max_t=100))
+print(evaluate_markov_chain_closed_form(transition_probs, rewards, 0)) 

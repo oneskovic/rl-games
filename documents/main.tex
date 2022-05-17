@@ -332,16 +332,16 @@ Ako se u izraz $E_r(t) = \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i-1)}$ z
 \[
 	\begin{split}
 	E_r(t) &= \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L_0}T^{i-1}\\
-	E_r(t) &= \vec{c} \cdot \vec{L_0} \cdot \sum_{i=1}^{t}\gamma^{i-1}T^{i-1}\\
+	E_r(t) &= \vec{c} \cdot \left( \vec{L_0} \cdot \sum_{i=1}^{t}\gamma^{i-1}T^{i-1}\right)\\
 	\end{split}
 \]
-Uvedimo matricu $A = \gamma T$ i vektor $b = \vec{c}\cdot\vec{L_0}$. Pa je prethodni izraz jednak: \\
+Uvedimo matricu $A = \gamma T$. Pa je prethodni izraz jednak: \\
 \[
 	\begin{split}
-	E_r(t) &= \vec{b} \cdot \sum_{i=1}^{t}A^i\\
+	E_r(t) &= \vec{c} \cdot \left( \vec{L_0} \cdot \sum_{i=1}^{t}A^i \right)\\
 	\end{split}
 \]
-Pa je potrebno naći $\lim_{t \to \infty}{E_r(t)} = \vec{b}\cdot \zbtg A^t$.\\
+Pa je potrebno naći $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0}\cdot \zbtg A^t \right)$.\\
 $\zbtg A^t$ je Nojmanova serija primenjna na prostor $R^n$.\\
 Dovoljan uslov za konvergenciju Nojmanove serije je da postoji norma tako da važi $||A|| < 1$.\\
 Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
@@ -354,7 +354,7 @@ Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
 Pa znamo da suma konvergira, dodatno lako je pokazati da za sumu $S = \sum_{i=0}^{t}A^i$ važi $S(I - A) = I - A^{t-1}$.\\
 Pa ukoliko postoji inverz $(I - A)^{-1}$ (što postoji kada Nojmanova serija konvergira) sledi da $S=(I - A^{t-1})(I-A)^{-1}$.\\
 Kada $t \to \infty$ onda je $A^{t-1} = 0$. Pa je $S = I(I-A)^{-1} = (I-A)^{-1}$.\\
-Čime je dokazano da $\lim_{t \to \infty}{E_r(t)} = \vec{b}(I-A)^{-1}$.
+Čime je dokazano da $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0} \cdot (I-A)^{-1} \right)$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
