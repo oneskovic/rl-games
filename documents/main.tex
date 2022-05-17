@@ -338,9 +338,24 @@ Ako se u izraz $E_r(t) = \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i-1)}$ z
 Uvedimo matricu $A = \gamma T$ i vektor $b = \vec{c}\cdot\vec{L_0}$. Pa je prethodni izraz jednak: \\
 \[
 	\begin{split}
-	E_r(t) &= \vec{b} \cdot \sum_{i=1}^{t}A^t\\
+	E_r(t) &= \vec{b} \cdot \sum_{i=1}^{t}A^i\\
 	\end{split}
 \]
+Pa je potrebno naći $\lim_{t \to \infty}{E_r(t)} = \vec{b}\cdot \zbtg A^t$.\\
+$\zbtg A^t$ je Nojmanova serija primenjna na prostor $R^n$.\\
+Dovoljan uslov za konvergenciju Nojmanove serije je da postoji norma tako da važi $||A|| < 1$.\\
+Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
+\[
+	\begin{split}
+	||A||_{\infty} &= \max_{i}\sum_{j}|A_{i,j}|\\
+	||A||_{\infty} &= \gamma < 1\\
+	\end{split}
+\]
+Pa znamo da suma konvergira, dodatno lako je pokazati da za sumu $S = \sum_{i=0}^{t}A^i$ važi $S(I - A) = I - A^{t-1}$.\\
+Pa ukoliko postoji inverz $(I - A)^{-1}$ (što postoji kada Nojmanova serija konvergira) sledi da $S=(I - A^{t-1})(I-A)^{-1}$.\\
+Kada $t \to \infty$ onda je $A^{t-1} = 0$. Pa je $S = I(I-A)^{-1} = (I-A)^{-1}$.\\
+Čime je dokazano da $\lim_{t \to \infty}{E_r(t)} = \vec{b}(I-A)^{-1}$.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter[Uvodni pojmovi]{Uvodni pojmovi}
