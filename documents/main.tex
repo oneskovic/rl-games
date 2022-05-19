@@ -253,7 +253,7 @@ Dodatno, lako je videti da je tako dobijen proces (slika 2) ekvivalentan sledeć
 \end{figure}
 Kada je dat ovakav lanac, kao sa slike 3, postavlja se pitanje: kako efikasno odredti očekivanu nagradu u tonm lancu, ako je dato početno stanje ili verovatnoće da svako stanje bude početno. Ako je ovo moguće uraditi, onda je odmah dat efikasan način da se evaluira očekivana nagrada koja će biti ostvarena ako se koristi neka fiksna politika.\\
 
-\subsection{Evaluacija politike ({\latin policy evaluation})}
+\section{Evaluacija politike ({\latin policy evaluation})}
 Kada je politika fiksirana, traženje očekivane nagrade koja će biti ostvarena ako se prati data politika je ekvivalentna nalaženju očekivane nagrade u nekom markovljevom lancu. Prvo, uvedimo sledeću notaciju:
 \begin{itemize}
 	\item $S_t$ - Skup svih sekvenci dužine $t$. Na primer ako se iz stanja $N_0$ poseti stanje $N_1$, pa stanje $N_2$ itd. pa se na kraju poseti stanje $N_t$ sekvenca bi bila $(N_0, N_1, N_2, \cdots , N_t)$
@@ -342,8 +342,8 @@ Uvedimo matricu $A = \gamma T$. Pa je prethodni izraz jednak: \\
 	\end{split}
 \]
 Pa je potrebno naći $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0}\cdot \zbtg A^t \right)$.\\
-$\zbtg A^t$ je Nojmanova serija primenjna na prostor $R^n$.\\
-Dovoljan uslov za konvergenciju Nojmanove serije je da postoji norma tako da važi $||A|| < 1$.\\
+$\zbtg A^t$ je Nojmanov red primenjn na prostor $R^n$.\\
+Dovoljan uslov za konvergenciju Nojmanovog reda je da postoji norma tako da važi $||A|| < 1$.\\
 Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
 \[
 	\begin{split}
@@ -352,10 +352,14 @@ Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
 	\end{split}
 \]
 Pa znamo da suma konvergira, dodatno lako je pokazati da za sumu $S = \sum_{i=0}^{t}A^i$ važi $S(I - A) = I - A^{t-1}$.\\
-Pa ukoliko postoji inverz $(I - A)^{-1}$ (što postoji kada Nojmanova serija konvergira) sledi da $S=(I - A^{t-1})(I-A)^{-1}$.\\
+Pa ukoliko postoji inverz $(I - A)^{-1}$ (što postoji kada Nojmanov red konvergira) sledi da $S=(I - A^{t-1})(I-A)^{-1}$.\\
 Kada $t \to \infty$ onda je $A^{t-1} = 0$. Pa je $S = I(I-A)^{-1} = (I-A)^{-1}$.\\
 Čime je dokazano da $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0} \cdot (I-A)^{-1} \right)$.
 
+\section{Optimizacija politike (\latin policy iteration)}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis in ante eget massa tincidunt gravida. Sed sit amet eros quis lacus tempor lobortis. Maecenas ut congue sapien. Nunc viverra magna nec convallis maximus. Praesent sed accumsan ante. Ut tincidunt, orci sed malesuada imperdiet, erat neque vestibulum eros, a porta ligula diam at nunc. Fusce at aliquam est. Morbi bibendum erat ut rutrum gravida. Cras tincidunt fermentum ex id condimentum. In scelerisque ut turpis eget faucibus. Vestibulum sollicitudin lacus cursus lacinia ultricies. Cras urna eros, venenatis ut enim ut, lacinia sagittis tortor. Phasellus facilisis viverra finibus. Vestibulum tincidunt fringilla purus ac condimentum. Sed sed egestas eros, ac mattis purus. Curabitur fermentum tempor odio eget eleifend.
+\section{Optimizacija vrednosti (\latin value iteration)}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis in ante eget massa tincidunt gravida. Sed sit amet eros quis lacus tempor lobortis. Maecenas ut congue sapien. Nunc viverra magna nec convallis maximus. Praesent sed accumsan ante. Ut tincidunt, orci sed malesuada imperdiet, erat neque vestibulum eros, a porta ligula diam at nunc. Fusce at aliquam est. Morbi bibendum erat ut rutrum gravida. Cras tincidunt fermentum ex id condimentum. In scelerisque ut turpis eget faucibus. Vestibulum sollicitudin lacus cursus lacinia ultricies. Cras urna eros, venenatis ut enim ut, lacinia sagittis tortor. Phasellus facilisis viverra finibus. Vestibulum tincidunt fringilla purus ac condimentum. Sed sed egestas eros, ac mattis purus. Curabitur fermentum tempor odio eget eleifend.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter[Uvodni pojmovi]{Uvodni pojmovi}
