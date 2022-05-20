@@ -1,7 +1,5 @@
 import numpy as np
-import networkx as nx
-import matplotlib.pyplot as plt
-from pyvis.network import Network
+
 from random_generator import get_random_chain, get_random_mdp
 
 def evaluate_random_policy_mdp(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100, max_episodes = 100):
@@ -84,6 +82,21 @@ def construct_all_deterministic_policies(state_cnt, action_cnt):
     policy = np.zeros((state_cnt, action_cnt))
     return construct_all_deterministic_policies_recursive(policy, 0)
 
+def q_value_iteration_matrix_form(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100):
+    state_cnt = transition_probs.shape[0]
+    action_cnt = transition_probs.shape[1]
+    q_values = np.zeros((state_cnt, action_cnt))
+    prev_q_values = np.zeros((state_cnt, action_cnt))
+    c_mat = np.zeros((state_cnt, action_cnt))
+    for s in range (state_cnt):
+        for a in range(action_cnt):
+            c_mat[s,a] = np.dot(transition_probs[s,a,:], rewards[s,a,:])
+    for t in range(max_t):
+        prev_max_q = prev_q_values.max(axis=1)
+        q_values = c_mat + gamma * np.tensordot(transition_probs, prev_max_q, axes=([2,0]))
+        prev_q_values = q_values
+    return q_values
+
 def test_value_iteration():
     for test_number in range(20):
         transition_probs, rewards = get_random_mdp()
@@ -94,7 +107,9 @@ def test_value_iteration():
 
         # uniform_random_policy = np.ones((state_cnt, action_cnt)) / action_cnt
         # print('Uniform random policy:',evaluate_policy(transition_probs, rewards, start_state=0, policy=uniform_random_policy))
-        optimal_policy = construct_policy(q_value_iteration(transition_probs, rewards, start_state=0))
+        q1 = q_value_iteration(transition_probs, rewards, start_state=0)
+        q2 = q_value_iteration_matrix_form(transition_probs, rewards, start_state=0)
+        optimal_policy = construct_policy(q1)
         optimal_policy_res = evaluate_policy(transition_probs, rewards, start_state=0, policy=optimal_policy, max_episodes=300)
         # print('Optimal policy result:',evaluate_policy(transition_probs, rewards, start_state=0, policy=optimal_policy))
         # print('Optimal policy', optimal_policy)
@@ -117,10 +132,6 @@ def test_value_iteration():
             print('Policies different')
             print(best_policy)
             print(optimal_policy)
-# transition_probs, rewards = get_random_chain()
-# print(evaluate_chain_bruteforce(transition_probs, rewards, 0))
-# print(evaluate_markov_chain(transition_probs, rewards, 0))
-# print(evaluate_markov_chain_as_limit(transition_probs, rewards, 0, max_t=100))
-# print(evaluate_markov_chain_closed_form(transition_probs, rewards, 0)) 
+ 
 if __name__ == '__main__':
     test_value_iteration()

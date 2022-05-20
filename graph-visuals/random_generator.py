@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_random_chain():
     state_cnt = 10
     transition_probs = np.random.ranf((state_cnt, state_cnt))
