@@ -1,3 +1,17 @@
+import numpy as np
+from random_generator import get_random_chain
+
+def mdp_to_markov_chain(transition_probs, rewards, start_state, policy):
+    state_cnt = transition_probs.shape[0]
+    action_cnt = transition_probs.shape[1]
+    transitions_under_policy = np.zeros((state_cnt, state_cnt))
+    rewards_under_policy = np.zeros((state_cnt, state_cnt))
+    for s in range(state_cnt):
+        for s_ in range(state_cnt):
+            for a in range(action_cnt):
+                transitions_under_policy[s,s_] += transition_probs[s,a,s_]*policy[s,a]
+                rewards_under_policy[s,s_] += rewards[s,a,s_]*policy[s,a]
+    return transitions_under_policy, rewards_under_policy
 
 def evaluate_markov_chain(transition_probs, rewards, start_state, max_steps = 6, episode_cnt = 10000, gamma = 0.9):
     state_cnt = transition_probs.shape[0]

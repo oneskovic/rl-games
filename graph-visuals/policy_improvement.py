@@ -2,22 +2,6 @@ import numpy as np
 
 from random_generator import get_random_chain, get_random_mdp
 
-def evaluate_random_policy_mdp(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100, max_episodes = 100):
-    expected_reward = 0.0
-    state_cnt = transition_probs.shape[0]
-    action_cnt = transition_probs.shape[1]
-    for episode in range(max_episodes):
-        episode_reward = 0.0
-        current_state = start_state
-        for step in range(max_t):
-            action = np.random.randint(action_cnt)
-            next_state = np.random.choice(state_cnt, p=transition_probs[current_state, action, :])
-            reward = rewards[current_state, action, next_state]
-            episode_reward += gamma**step * reward
-            current_state = next_state
-        expected_reward += episode_reward
-    return expected_reward / max_episodes
-
 def q_value_iteration(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100):
     state_cnt = transition_probs.shape[0]
     action_cnt = transition_probs.shape[1]
@@ -29,8 +13,24 @@ def q_value_iteration(transition_probs, rewards, start_state, gamma = 0.9, max_t
                 q_values[s,a] = 0.0
                 for s_ in range(state_cnt):
                     q_values[s,a] += transition_probs[s,a,s_] * (rewards[s,a,s_] + gamma * prev_q_values[s_,:].max())
-        prev_q_values = q_values
+        prev_q_values = q_values.copy()
     return q_values            
+
+def q_value_iteration_matrix_form(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100):
+    state_cnt = transition_probs.shape[0]
+    action_cnt = transition_probs.shape[1]
+    q_values = np.zeros((state_cnt, action_cnt))
+    prev_q_values = np.zeros((state_cnt, action_cnt))
+    c_mat = np.zeros((state_cnt, action_cnt))
+    for s in range (state_cnt):
+        for a in range(action_cnt):
+            c_mat[s,a] = np.dot(transition_probs[s,a,:], rewards[s,a,:])
+    
+    for t in range(max_t):
+        prev_max_q = prev_q_values.max(axis=1)
+        q_values = c_mat + gamma * np.tensordot(transition_probs, prev_max_q, axes=([2,0]))
+        prev_q_values = q_values.copy()
+    return q_values
 
 def construct_policy(q_values):
     state_cnt = q_values.shape[0]
@@ -41,7 +41,8 @@ def construct_policy(q_values):
         policy[s,ind] = 1
     return policy
 
-def evaluate_policy_for_episodes(transition_probs, rewards, start_state, policy, gamma = 0.9, max_t = 100, episode_cnt = 10):
+def evaluate_policy_for_episodes(transition_probs, rewards, start_state, policy, gamma = 0.9, max_t = 300, episode_cnt = 10):
+    rng = np.random.default_rng()
     total_reward = 0.0
     for e in range(episode_cnt):
         episode_reward = 0.0
@@ -49,17 +50,18 @@ def evaluate_policy_for_episodes(transition_probs, rewards, start_state, policy,
         state_cnt = transition_probs.shape[0]
         action_cnt = transition_probs.shape[1]
         for step in range(max_t):
-            action = np.random.choice(action_cnt,p=policy[current_state,:])
-            next_state = np.random.choice(state_cnt, p=transition_probs[current_state, action, :])
+            action = rng.choice(action_cnt,p=policy[current_state,:])
+            next_state = rng.choice(state_cnt, p=transition_probs[current_state, action, :])
             reward = rewards[current_state, action, next_state]
             episode_reward += gamma**step * reward
             current_state = next_state
         total_reward += episode_reward
     return total_reward
 
-def evaluate_policy(transition_probs, rewards, start_state, policy, gamma = 0.9, max_t = 100, max_episodes = 100, thread_count = 10):
+def evaluate_policy(transition_probs, rewards, start_state, policy, gamma = 0.9, max_t = 1000, max_episodes = 100, thread_count = 10):
     from multiprocessing import Pool
-    expected_reward = 0.0
+    # expected_reward = evaluate_policy_for_episodes(transition_probs,rewards,start_state,policy,gamma,max_t,max_episodes) / max_episodes
+    # return expected_reward
     episodes_per_thread = max_episodes // thread_count
     with Pool(thread_count) as p:
         episodes = p.starmap(evaluate_policy_for_episodes, [(transition_probs, rewards, start_state, policy, gamma, max_t, episodes_per_thread) for _ in range(thread_count)])
@@ -82,21 +84,6 @@ def construct_all_deterministic_policies(state_cnt, action_cnt):
     policy = np.zeros((state_cnt, action_cnt))
     return construct_all_deterministic_policies_recursive(policy, 0)
 
-def q_value_iteration_matrix_form(transition_probs, rewards, start_state, gamma = 0.9, max_t = 100):
-    state_cnt = transition_probs.shape[0]
-    action_cnt = transition_probs.shape[1]
-    q_values = np.zeros((state_cnt, action_cnt))
-    prev_q_values = np.zeros((state_cnt, action_cnt))
-    c_mat = np.zeros((state_cnt, action_cnt))
-    for s in range (state_cnt):
-        for a in range(action_cnt):
-            c_mat[s,a] = np.dot(transition_probs[s,a,:], rewards[s,a,:])
-    for t in range(max_t):
-        prev_max_q = prev_q_values.max(axis=1)
-        q_values = c_mat + gamma * np.tensordot(transition_probs, prev_max_q, axes=([2,0]))
-        prev_q_values = q_values
-    return q_values
-
 def test_value_iteration():
     for test_number in range(20):
         transition_probs, rewards = get_random_mdp()
@@ -110,7 +97,7 @@ def test_value_iteration():
         q1 = q_value_iteration(transition_probs, rewards, start_state=0)
         q2 = q_value_iteration_matrix_form(transition_probs, rewards, start_state=0)
         optimal_policy = construct_policy(q1)
-        optimal_policy_res = evaluate_policy(transition_probs, rewards, start_state=0, policy=optimal_policy, max_episodes=300)
+        optimal_policy_res = evaluate_policy(transition_probs, rewards, start_state=0, policy=optimal_policy, max_episodes=500)
         # print('Optimal policy result:',evaluate_policy(transition_probs, rewards, start_state=0, policy=optimal_policy))
         # print('Optimal policy', optimal_policy)
 
