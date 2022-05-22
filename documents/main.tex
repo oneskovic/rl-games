@@ -94,7 +94,7 @@ sorting=ynt
 \newcommand{\zbtg}{\sum_{t=0}^\infty}
 \newcommand{\osr}{\,_{\,\leftrightarrow}^{osr}\,}
 \newcommand{\esr}{\,_{\,\leftrightarrow}^{esr}\,}
-\newcommand{\piopt}{{\pi}_\text{\latin opt}}
+\newcommand{\piopt}{{\pi}^{*}}
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 
 \renewcommand*{\proofname}{Dokaz}
@@ -453,7 +453,49 @@ Ako se obe strane nejednakosti pomnože sa $\pi(a|s)$ i sumiraju po svakom $a$ d
 	\end{split}
 \]
 Pošto je definicija $B^{\pi}(V)_s = \gamma \sum_{a} \sum_{s'}\pi(a|s) T(s,a,s')(R(s,a,s')+V_{s'})$ i kako je $\sum_{a} \pi(a|s) B^*(V)_s = B^*(V)_s$.
-Dokazano je da $B^*(V)_s \geq B^{\pi}(V)_s$
+Dokazano je da $B^*(V)_s \geq B^{\pi}(V)_s$.
+\lem{Operator $B^*$ optimizuje funkciju vrednosti stanja, odnosno nakon primene $B^*$ funkcija vrednosti stanja se ne može pogoršati:\\
+$(\forall V)(\forall s) B^*(V)_s \geq V_s$}\\
+Uzmimo politiku $\pi$ tako da je $V$ stacionarna tačka $B^{\pi}$.
+Treba dokazati:
+\[ B^*(V)_s \geq V_s \]
+A pošto je $(\forall s) B^{\pi}(V)_s = V_s$ nejednakost je ekvivalentna:
+\[ B^*(V)_s \geq B^{\pi}(V)_s \]
+Što važi na osnovu leme 2.4 čime je dokaz kompletiran.
+\lem{Stacionarna tačka $V^*$ operatora $B^*$ je optimalna funkcija vrednosti, odnosno: $(\forall V)(\forall s) V^*_s \geq V_s$ }\\
+Pretpostavimo suprotno: $(\exists v)(\exists s) V^*_s < V_s$\\
+Na osnovu monotonosti operatora $B^*$ može se primeniti operator $B^*$ na desnu stranu nejednakosti proizvoljan broj puta:
+\[
+	\begin{split}
+		V^*_s &< B^*(V)_s\\
+		V^*_s &< \lim_{k \to \infty}(B^*)^k(V)_s\\
+	\end{split}
+\]
+Pošto je $B^*$ kontrakcija, a $V^*$ stacionarna tačka za $B^*$ važi:
+\[ \lim_{k \to \infty}(B^*)^k(V)_s = V^*_s \]
+Pa je nejednakost ekvivalentna:
+\[ V^*_s < V^*_s \]
+Što je kontradikcija, čime je dokazana početna lema.
+\medskip \\
+Ovim je pokazano da je moguće pronaći optimalnu funkciju vrednosti stanja počevši od bilo koje funkcije vrednosti stanja i iterativnom
+primenom belmanovog optimizacionog operatora. Još preostaje da se dokaže da postoji stacionarna, deterministička politika koja
+dostiže očekivanu vrednost optimalne funkcije stanja.
+\teo {U proizvoljnom markovljevom procesu odlučivanja politika:\\
+\[ \piopt(s) = \text{argmax}_a \left( \sum_{s'} T(s,a,s')(R(s,a,s')+\gamma V^*_{s'}) \right) \]
+je stacionarna, deterministička politika čija je očekivana nagrada $(\forall s) V^{\piopt}_s = V^*_s$, politika $\piopt$ je optimalna. }\\
+Kako je $V^*$ stacionarna tačka $B^*$ važi $(\forall s) B^*(V^*)_s = V^*_s$.
+\[
+	\begin{split}
+		V^*_s &= B^*(V^*)_s\\
+		V^*_s &= \text{max}_a \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V^*_{s'})\\
+		V^*_s &= \sum_{s'} T(s,\piopt(s),s')(R(s,\piopt(s),s') + \gamma V^*_{s'})
+	\end{split}
+\]
+Kako je $V^{\piopt}_s = \sum_{s'}T(s,\piopt(s),s')(R(s,\piopt(s),s') + \gamma V^{\piopt}_{s'})$, a iz definicje $\piopt$ je
+$V^{\piopt}_{s'} = V^*_{s'}$ dokazano je da:
+\[ (\forall s) V^*_s = V^{\piopt}_s \]
+Zajedno sa metodom za pronalaženje optimalne funkcije stanja $V^*$ ova teorema daje efikasan način da se pronađe optimalna
+politika odlučivanja $\piopt$, što upotpunjuje algoritam optimizacije vrednosti.
 %\renewcommand*{\biblname}{}
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}
