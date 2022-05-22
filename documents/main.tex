@@ -47,6 +47,7 @@ backend=biber,
 style=apa,
 sorting=ynt
 ]{biblatex}
+\DeclareLanguageMapping{serbian}{serbian-apa}
 
 \usepackage[font=small,labelfont=bf]{caption}
 
@@ -355,73 +356,104 @@ Pa znamo da suma konvergira, dodatno lako je pokazati da za sumu $S = \sum_{i=0}
 Pa ukoliko postoji inverz $(I - A)^{-1}$ (što postoji kada Nojmanov red konvergira) sledi da $S=(I - A^{t-1})(I-A)^{-1}$.\\
 Kada $t \to \infty$ onda je $A^{t-1} = 0$. Pa je $S = I(I-A)^{-1} = (I-A)^{-1}$.\\
 Čime je dokazano da $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0} \cdot (I-A)^{-1} \right)$.
+\medskip \\
+
+Korisno je napomenuti da postoji još jedan značajan način da se pronađe očekivana nagrada koju neka politika ostvarujue, a to je
+pomoću takozvanog \textit{belmanovog operatora očekivanja}. Može se definisati očekivana vrednost za politiku $\pi$ iz stanja $s$ kao
+$V^{\pi}(s)$. Funkcija $V$ se naziva funkcija vrednosti stanja. Funkcije stanja mogu se posmatrati kao vektori u banahovom prostoru
+$\mathbb{R}^{|S|}$ gde je $S$ skup svih mogućih stanja. Na ovom prostoru se definiše i norma, na primer maksimum norma $|v|_{\infty}$.\\
+Pa se zatim može uvesti belmanov operator očekivanja za stacionarnu determinističku politiku $\pi$:
+\[
+	B^{\pi}(V)_s = \sum_{s'}T(S,\pi(S),S')(R(S,\pi(S),S')+\gamma V(S'))
+\]
+ili slično i za nedeterminističke politike. Pa se može pokazati ({\latin \cite{puterman2014markov}}) da je belmanov operator očekivanja kontrakcija na datom prostoru.
+Pa postoji stacionarna tačka $B^{\pi}(x) = x$. Dokazuje se ({\latin \cite{puterman2014markov}}) da je tačka $x$ upravo $V^{\pi}$.
+Sličan dokaz će biti izložen za algoritam optimizacije vrednosti.
 
 \section{Optimizacija politike (\latin policy iteration)}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis in ante eget massa tincidunt gravida. Sed sit amet eros quis lacus tempor lobortis. Maecenas ut congue sapien. Nunc viverra magna nec convallis maximus. Praesent sed accumsan ante. Ut tincidunt, orci sed malesuada imperdiet, erat neque vestibulum eros, a porta ligula diam at nunc. Fusce at aliquam est. Morbi bibendum erat ut rutrum gravida. Cras tincidunt fermentum ex id condimentum. In scelerisque ut turpis eget faucibus. Vestibulum sollicitudin lacus cursus lacinia ultricies. Cras urna eros, venenatis ut enim ut, lacinia sagittis tortor. Phasellus facilisis viverra finibus. Vestibulum tincidunt fringilla purus ac condimentum. Sed sed egestas eros, ac mattis purus. Curabitur fermentum tempor odio eget eleifend.
+Može se pokazati {\latin (\cite{puterman2014markov})} da je optimalna politika $\piopt$ stacionarna (ne zavisi od vremena) i 
+deterministička, pa će samo takve politike biti razmatrane nadalje.\\
+da je broj mogućih stacionarnih, determinističkih politika $|A|^{|S|}$ gde je $A$ skup mogućih akcija, 
+a $S$ skup mogućih stanja.
+Pa je jedan način za pronalaženje optimalne politike evaluacija svake moguće politike pomoću prethodno izvedene metode. Međutim, moguće je pronaći optimalnu politiku efikasnije algoritmom optimizacije funkcije vrednosti (tj. value iteration).
 \section{Optimizacija vrednosti (\latin value iteration)}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis in ante eget massa tincidunt gravida. Sed sit amet eros quis lacus tempor lobortis. Maecenas ut congue sapien. Nunc viverra magna nec convallis maximus. Praesent sed accumsan ante. Ut tincidunt, orci sed malesuada imperdiet, erat neque vestibulum eros, a porta ligula diam at nunc. Fusce at aliquam est. Morbi bibendum erat ut rutrum gravida. Cras tincidunt fermentum ex id condimentum. In scelerisque ut turpis eget faucibus. Vestibulum sollicitudin lacus cursus lacinia ultricies. Cras urna eros, venenatis ut enim ut, lacinia sagittis tortor. Phasellus facilisis viverra finibus. Vestibulum tincidunt fringilla purus ac condimentum. Sed sed egestas eros, ac mattis purus. Curabitur fermentum tempor odio eget eleifend.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter[Uvodni pojmovi]{Uvodni pojmovi}
-\bigskip
-\de Ovo je definicija. 
-
-\de Ovo je \emph{druga} \textbf{definicija}.
-
-\begin{figure}[ht]
-	\includegraphics[scale=1]{resenje41.pdf}
-	\figurename{Proba slike, sve je c1irilicom}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Topolo\sh ki prostori]{Topolo\sh ki prostori}
-\medskip
-
-\de 
-\begin{enumerate}
-\item[(1)]  Ovako se pi\sh e takozvana \emph{\latin inline} formula, $X\in\mathcal{O}$, koja se uklapa u tekst. 
-
-\item[(2)] A ovako se pi\sh e formula koja je u zasebnom redu
+Uvedimo notaciju za očekivanu vrednost koja se može ostvariti iz stanja (funkciju vrednosti stanja) $s$ ako se prati neka stacionarna, deterministička politika $\pi$:
 \[
-ax+by=c,\ \sum_{n=1}^{\infty} \frac{1}{n(n+1)} = \dots
+	V^{\pi}(s) = \sum_{s'}T(s,\pi(s),s')R(s,\pi(s),s') + \gamma V^{\pi}(s')
 \]
-
-\item[(3)] Ukoliko \zh elite da jedna formula ima vi\sh e redova, jedan od na\ch ina da to postignete je 
+Primetimo da sa obzirom da je funkcija $V$ diskretna, a broj stanja konačan možemo reći da se sve funkcije vrednosti stanja
+nalaze u banahovom prostoru $R^{|S|}$ gde je $S$ skup svih mogućih stanja. Dodatno u ovom prostoru uzećemo beskonačno normu
+$||v||_{\infty} := \text{max}(|v_{1}|,|v_{2}|,...,|v_{n}|)$.
+Algoritam optimizacije funkcije vrednosti stanja nalazi funkciju stanja $V^{*}(s)$ koja predstavlja maksimalnu moguću
+očekivanu vrednost koja se može ostvariti is stanja $s$ ako se i u narednim stanjima izvršavaju optimalne akcije.
+Kasnije će biti pokazano da $V^{*}$ odgovara stacionarnoj, determinističkoj, optimalnoj politici $\piopt$.
+U svrhu nalaženja $V^{*}$ uvedimo takozvani \textit{belmanov optimizacioni operator} $B^{*}$ koji deluje na vektore
+iz datog banahovog prostora:
 \[
-\begin{split}
- S &= puno formula, puno formula \\ &= 2.	
-\end{split}
+	B^{*}(V)_s = \text{max}_{a}\sum_{s'}T(s,a,s')(R(s,a,s') + \gamma V_{s'})
 \]
-\end{enumerate}
+Algoritam optimizacije funkcije vrednosti stanja uključuje iterativnu primenu belmanovog operatora na 
+početnu funkciju vrednosti stanja (tj. na početni vektor). Kako bi pokazali da algoritam konvergira i da konvergira upravo 
+na vrednost $V^{*}$ biće dokazano da je operator $B^{*}$ kontrakcija na datom banahovom prostoru.\\ 
+Prema banahovoj teoremi fiksne tačke ukoliko je $B^{*}$ kontrakcija na prostoru $R^{|S|}$ 
+onda postoji vektor $x^*$ takav da važi $B^{*}(x^{*}) = x^{*}$ i dodatno za sve ostale vektore u tom prostoru 
+važi da ukoliko se definiše red $x_n = B^{*}(x_{n-1})$ onda je $\lim_{n \to \infty} x_n = x^*$. Na kraju potrebno je
+još pokazati da je $x^{*} = V^{*}$, odnosno da algoritam konvergira na optimalnu vrednost.
+\teo{$(\forall U \in R^{|S|}, \forall V \in R^{|S|}, U \neq V ) ||B^*(V) - B^*(U)||_{\infty} \leq k ||V - U||_{\infty}$ gde $k \in [0,1)$}\\
+Po definiciji je:
+\[ B^*(V)_s = \text{max}_{a}\sum_{s'}T(s,a,s')(R(s,a,s')+\gamma V_{s'}) \]
+Pošto je skup akcija konačan, postoji akcija $a_1$ koja maksimizuje datu sumu, pa se može zapisati:
+\[	B^*(V)_s = \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma V_{s'}) \]
+Analogno za $U_s$
+\[	B^*(U)_s = \sum_{s'}T(s,a_2,s')(R(s,a_2,s')+\gamma U_{s'}) \]
+Pošto akcija $a_2$ maksimizuje prethodnu sumu važi sledeća nejednakost:
+\[	B^*(U)_s \geq \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma U_{s'}) \]
+Pa za razliku $B^*(V)_s - B^*(U)_s$ važi nejednakost:
+\[ 
+	\begin{split}
+		B^*(V)_s - B^*(U)_s &\leq \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma V_{s'}) - \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma U_{s'})\\
+		B^*(V)_s - B^*(U)_s &\leq \sum_{s'}(T(s,a_1,s')(R(s,a_1,s') + \gamma V_{s'} - R(s,a_1,s') - \gamma U_{s'}))\\
+		B^*(V)_s - B^*(U)_s &\leq \gamma \sum_{s'}(T(s,a_1,s')(V_{s'} - U_{s'}))\\
+	\end{split}
+\]
+Pošto je $|x| \geq x$, važi:
+\[ B^*(V)_s - B^*(U)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| (a)\]
+Primetimo da ukoliko razmenimo vrednosti $U$ i $V$ dobija se sledeća nejednakost:
+\[ B^*(U)_s - B^*(V)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| (b)\]
+Iz $a$, $b$ sledi:
+\[ |B^*(V)_s - B^*(U)_s| \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| \] 
+Ukoliko se $|V_{s'} - U_{s'}|$ zameni sa $\text{max}_{s''}|V_{s''} - U_{s''}|$ desna strana nejednakosti se može
+samo povećati pa važi nejednakost:
+\[ 
+	\begin{split}
+		|B^*(V)_s - B^*(U)_s| &\leq \gamma \sum_{s'}T(s,a_1,s')\text{max}_{s''}|V_{s''} - U_{s''}|\\
+		|B^*(V)_s - B^*(U)_s| &\leq \gamma \text{max}_{s''}|V_{s''} - U_{s''}|\\
+		|B^*(V)_s - B^*(U)_s| &\leq \gamma ||V - U||_{\infty}\\
+	\end{split}
+\] 
+Primetimo da nejednakost $|B^*(V)_s - B^*(U)_s| \leq \gamma ||V - U||_{\infty}$ važi za svako $U$, $V$ 
+i svako stanje $s$, što je dovoljan uslov za:
+\[
+	||B^*(V) - B^*(U)||_{\infty} \leq \gamma ||V - U||_{\infty}
+\]
+A kako je $\gamma < 1$ teorema je dokazana.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[Kratko ime]{Puno ime}
-\medskip
-
-\de \emph{Simpleks} 
-\te  Za svako $n\geqslant 0$, sledec1a tvr\dj enja su
-ekvivalentna i ta\ch na:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section[ Borsukov graf]{ Borsukov graf}
-
-\bigskip
-
-\teo  Za pozitivan realan broj $\alpha<2$, neka je
-$B(n+1,\alpha)$ (beskona\ch an) 
-
-\begin{proof}[Dokaz]
-Pretpostavimo da va\zh i teorema Borsuk-Ulama i 
-\end{proof}
-
- \clearpage \thispagestyle{empty} \textcolor{white}{proba}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+\lem $(\forall s) (\forall V \in \mathbb{R}^{|S|}) B^*(V)_s \geq B^{\pi}(V)_s$ \\
+Za stacionarne, determinističke politike je dokaz jednostavan, pa je izložen dokaz za stacionarne nedeterminističke politike
+koje su nadskup stacionarnih, determinističkih politika.
+Po definiciji operatora $B^*$ važi:
+\[
+	B^*(V)_s = \text{max}_a \gamma \sum_{s'}T(s,a,s')(R(s,a,s')+V_{s'}) \geq \gamma \sum_{s'}T(s,a,s')(R(s,a,s')+V_{s'}) (\forall a) 
+\]
+Ako se obe strane nejednakosti pomnože sa $\pi(a|s)$ i sumiraju po svakom $a$ dobija se sledeća nejednakost:
+\[
+	\begin{split}
+		\sum_{a} \pi(a|s) B^*(V)_s &\geq \gamma \sum_{a} \pi(a|s) \sum_{s'}T(s,a,s')(R(s,a,s')+V_{s'}) (\forall a)\\
+		\sum_{a} \pi(a|s) B^*(V)_s &\geq \gamma \sum_{a} \sum_{s'}\pi(a|s) T(s,a,s')(R(s,a,s')+V_{s'}) (\forall a)\\
+	\end{split}
+\]
+Pošto je definicija $B^{\pi}(V)_s = \gamma \sum_{a} \sum_{s'}\pi(a|s) T(s,a,s')(R(s,a,s')+V_{s'})$ i kako je $\sum_{a} \pi(a|s) B^*(V)_s = B^*(V)_s$.
+Dokazano je da $B^*(V)_s \geq B^{\pi}(V)_s$
 %\renewcommand*{\biblname}{}
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}
