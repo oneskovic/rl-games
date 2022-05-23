@@ -496,7 +496,106 @@ $V^{\piopt}_{s'} = V^*_{s'}$ dokazano je da:
 \[ (\forall s) V^*_s = V^{\piopt}_s \]
 Zajedno sa metodom za pronalaženje optimalne funkcije stanja $V^*$ ova teorema daje efikasan način da se pronađe optimalna
 politika odlučivanja $\piopt$, što upotpunjuje algoritam optimizacije vrednosti.
-%\renewcommand*{\biblname}{}
+
+\section{Stohastička aproksimacija funkcije vrednosti stanja}
+U kontekstu primene markovljevih procesa odlučivanja potrebno je razmatrati i procese u kojima verovatnoće nisu unapred poznate.
+Na primer, za primenu belmanovog optimizacionog operatora $B^*$ potrebno je znati vrednosti $T(s,a,s')$ i $R(s,a,s')$ za svako $s$, $a$ i $s'$.
+U praksi ove vrednosti najčešće nisu poznate, a kasnije će se razmatrati i procesi gde je broj stanja previše velik da bi se te vrednosti
+uopšte čuvale ili sračunale. Pošto nije moguće znati prave vrednosti, neophodno je aproksimirati verovatnoću.
+Pošto je belmanov operator očekivanja:
+\[ 	B^{\pi}(V)_s = \sum_{s'}T(s,a,s')(R(s,a,s') + \gamma V_{s'}) \]
+Primetimo da se data suma može razdvojiti:
+\[ 	B^{\pi}(V)_s = \sum_{s'}T(s,a,s')R(s,a,s') + \sum_{s'}T(s,a,s')\gamma V_{s'}\]
+Dodatno, primetimo da je $\sum_{s'}T(s,a,s')R(s,a,s')$ očekivana vrednost nagrade iz stanja $s$, kada se izvrši akcija $a$, odnosno:
+$\sum_{s'}T(s,a,s')R(s,a,s') = \mathbb{E}(R | s,a)$.
+Slično, suma $\sum_{s'}T(s,a,s') V_{s'}$ je očekivana vrednost buduće nagrade, odnosno:
+$\sum_{s'}T(s,a,s')\gamma V_{s'} = \gamma \mathbb{E}(V | s, a)$. Pa se belmanov operator može ekvivalentno zapisati kao:
+\[ 	B^{\pi}(V)_s = \text{max}_{a}\left( \mathbb{E}(R | s,a) + \gamma \mathbb{E}(V | s, a) \right) \]
+U cilju aproksimacije potrebnih očekivanih vrednosti biće dokazane sledeće leme:
+\lem {Za red $E_n = \frac{1}{n+1}(n E_{n-1} + x_n), E_0 = x_0$ važi $E_n = \frac{1}{n+1}\sum_{i=0}^n x_i$}\\
+Lema će biti dokazana indukcijom. Induktivna hipoteza je: $E_n = \frac{1}{n+1}\sum_{i=0}^n x_i$.
+Baza je $E_0 = \frac{1}{1}\sum_{i=0}^0 x_i = x_0$, a po definiciji reda je $E_0 = x_0$ čime je baza indukcije dokazana.\\
+Uzmimo da važi tvrdnja za $n-1$: $E_{n-1} = \frac{1}{n}\sum_{i=0}^{n-1} x_i$.
+Po definiciji je $E_n = \frac{1}{n+1}(n E_{n-1} + x_n)$. Ako se zameni vrednost za $E_{n-1}$, dobija se jednakost:
+\[
+	\begin{split}
+		E_n &= \frac{1}{n+1}(n \frac{1}{n}\sum_{i=0}^{n-1}x_i + x_n)\\
+		E_n &= \frac{1}{n+1}(\sum_{i=0}^{n-1}x_i + x_n)\\
+		E_n &= \frac{1}{n+1}\sum_{i=0}^{n}x_i
+	\end{split}
+\]
+Čime je dokazana lema.
+
+\lem{Neka je definisan red: $E_n = E_{n-1} + \frac{1}{n+1}(x_n - E_{n-1}), E_0 = x_0$, onda je 
+$\lim_{n \to \infty} E_n = \mathbb{E}(X)$}\\
+Prvo je dokazana ekvivalencija sa jednostavnijim redom:
+\[
+	\begin{split}
+		E_n &= E_{n-1} + \frac{1}{n+1}(x_n - E_{n-1})\\
+		E_n &= E_{n-1} + \frac{x_n}{n+1} - \frac{E_{n-1}}{n+1}\\
+		E_n &= \frac{n}{n+1}E_{n-1} + \frac{x_n}{n+1}\\
+		E_n &=  \frac{1}{n+1}(n E_{n-1} + x_n)
+	\end{split}
+\]
+Pa zajedno sa prethodnom lemom sledi:
+\[E_n = \frac{1}{n+1}\sum_{i=0}^n x_i\]
+Primetimo da je izraz $\frac{1}{n+1}\sum_{i=0}^n x_i$ srednja vrednost uzorka $x_0, x_1, ... , x_n$. Odnosno:
+\[E_n = \frac{1}{n+1}\sum_{i=0}^n x_i = \overline{X_n}	\]
+Pa se početno tvrđenje svodi na:
+\[ \lim_{n \to \infty} \overline{X_n} = \mathbb{E}(X) \]
+Što je tvrdnja zakona velikih brojeva.
+\medskip \\
+Algoritam određivanja funkcije vrednosti stanja pod politikom $\pi$ se može formulisati na sledeći način:
+\[ V_s \leftarrow \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V_{s'}) \]
+Ako je data epizoda generisana politikom $\pi$: $s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$.
+Na osnovu date epizode, motivisani prethodnim lemama možemo formulisati stohastičku verziju prethodnog algoritma:
+\[ V_{s_t} \leftarrow V_{s_t} + \alpha_t (R_t + \gamma V_{s_{t+1}} - V_{s_t}) \]
+Formalnije je dokazano ({\latin \cite{sutton2018reinforcement}}) da i stohastička verzija konvergira na pravu vrednost $V^{\pi}$. 
+
+\section{Učenje Q vrednosti}
+Slično kao funkcija vrednosti stanja, može se definisati funkcija očekivane nagrade $Q^{\pi}(s,a)$ koja predstavlja očekivanu
+nagradu ako se u stanju $s$ izvrši akcija $a$ i nadalje deluje po politici $\pi$. Veoma slično kao za funkciju vrednosti
+stanja $V^{\pi}$, za $Q$ funkciju se pokazuje da važi:
+\[
+	Q^{\pi}(s,a) = \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma Q(s',\pi(s)))
+\]
+Postoji optimalna $Q$ funkcija $Q^*(s,a)$ koja predstavlja maksimalnu očekivanu nagradu koja se može dobiti ako se u stanju
+$s$ izvrši akcija $a$ i nadalje deluje optimalno.
+\[
+	Q^*(s,a) = \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma \text{max}_{a'}Q^*(s',a'))
+\]
+Ako je optimalna politika $\piopt$ važi:
+\[
+	V^* = V^{\piopt}(s) = \text{max}_a \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V^{\piopt}(s'))
+\]
+Sa obzirom da su $Q$ funkcija i $V$ funkcija povezane sledećom jednakosti:
+\[ V^{\pi}(s) = \sum_a \pi(a | s)Q^{\pi}(s,a) \]
+Za politiku $\piopt$ važi:
+\[ V^{\piopt}(s) = \max_a Q^{\piopt}(s,a) \]
+Pa se jednačina za $Q^*$ može zapisati ekvivalentno na sledeći način:
+\[
+	Q^*(s,a) = \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V^{\piopt}(s'))
+\]
+Stoga je jasno da ako su date vrednosti optimalne funkcije $V^*$ odmah su date i vrednosti optimalne $Q$ funkcije $Q^*$.
+Što opravdava uvođenje algoritma optimizacije $Q$ vrednosti koji je analogan prethodnom algoritmu učenja optimalne vrednosti stanja $V^*$.
+\[ Q(s,a) \leftarrow \sum_{s'}T(s,a,s')(R(s,a,s')+\gamma \text{max}_{a'}Q(s',a')) \]
+Pa zatim i stohastičku verziju tog algoritma:\\
+Ako je data epizoda: $E: s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$\\
+Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
+\[ 
+	Q_n(s,a) =
+	\begin{cases}
+		(1-\alpha_n)Q_{n-1}(s,a) + \alpha_n (r_n + \gamma \text{max}_{a'}Q_{n-1}(s',a')), & \text{ako } s_n = s, a_n = a\\
+		Q_{n-1}(s,a), & \text{u suprotnom}
+	\end{cases}
+\]
+Kada $n \to \infty$ dokazano je da $Q_n(s,a) \to Q^*(s,a)$ {\latin (\cite{watkins1992q}) (\cite{sutton2018reinforcement})} pod uslovima:
+\begin{itemize}
+	\item Kada $n \to \infty$ svako stanje i svaka akcija će se pojaviti u sekvenci $E$ beskonačno puta, odnosno: $(\forall s)(\forall a)p(s_n = s, a_n = a) > 0$.
+ 	\item $(\forall s)(\forall a)  \sum_i^{\infty}\alpha_{n_i(s,a)} = \infty$, ali $\sum_i^{\infty}\left(\alpha_{ {n_i(s,a)}}\right)^2 < \infty$ gde je $n_i(s,a)$ pozicija u sekvenci $E$ kada je akcija $a$ izvršena u stanju $s$.
+  	\item Nagrade su konačne 
+\end{itemize}
+
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}
 \latin
