@@ -26,7 +26,6 @@
 \newcommand{\zh}{\v z}
 \newcommand{\Zh}{\v Z}
 
-
 \renewcommand{\baselinestretch}{1}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -589,12 +588,91 @@ Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
 		Q_{n-1}(s,a), & \text{u suprotnom}
 	\end{cases}
 \]
+
 Kada $n \to \infty$ dokazano je da $Q_n(s,a) \to Q^*(s,a)$ {\latin (\cite{watkins1992q}) (\cite{sutton2018reinforcement})} pod uslovima:
 \begin{itemize}
 	\item Kada $n \to \infty$ svako stanje i svaka akcija će se pojaviti u sekvenci $E$ beskonačno puta, odnosno: $(\forall s)(\forall a)p(s_n = s, a_n = a) > 0$.
- 	\item $(\forall s)(\forall a)  \sum_i^{\infty}\alpha_{n_i(s,a)} = \infty$, ali $\sum_i^{\infty}\left(\alpha_{ {n_i(s,a)}}\right)^2 < \infty$ gde je $n_i(s,a)$ pozicija u sekvenci $E$ kada je akcija $a$ izvršena u stanju $s$.
+ 	\item $(\forall s)(\forall a)  \sum_i^{\infty}\alpha_{n_i(s,a)} = \infty$, ali $\sum_i^{\infty}\left(\alpha_{ {n_i(s,a)}}\right)^2 = \text{const}$ gde je $n_i(s,a)$ $i$-ta pozicija u sekvenci $E$ kada je akcija $a$ izvršena u stanju $s$.
   	\item Nagrade su konačne 
 \end{itemize}
+
+\section{Aproksimacija funkcije}
+Ako je dat skup podataka $S: \{(\vec{x_0},\vec{y_0}),(\vec{x_1},\vec{y_1}),...,(\vec{x_n},\vec{y_n})\}, x_i \in \mathbb{R}^n, y_i \in \mathbb{R}^m$ cilj aproksimacije funkcije
+je pronaći funkciju $f(x) : \mathbb{R}^n \rightarrow \mathbb{R}^m$ koja minimizuje empirijski i / ili strukturalni rizik. Minimizacija
+empirijskog rizika definisana je kao minimizacija izraza:\\
+\[ \frac{1}{n}\sum_i L(f(x_i),y_i) \]
+Gde je $L(\hat{y},y) : (\mathbb{R}^m,\mathbb{R}^m) \rightarrow \mathbb{R}$ funkcija gubitka koja određuje koliko je neko predviđeno
+$\hat{y}$ slično pravom $y$. $L$ može i ne mora biti metrika, na primer često se koriste funkcije gubitka:\\
+\begin{itemize}
+	\item Apsolutna greška: $L_1(\hat{y},y) = ||\hat{y} - y||_1$
+ 	\item Kvadratna greška: $L_2(\hat{y},y) = (||\hat{y} - y||_2)^2$
+  	\item Cross entropy: $L(\hat{y},y) = -\sum_i y_i \ln(\hat{y}_i)$  
+\end{itemize}
+Postoji veliki broj metoda za pronalaženje funkcije koja minimizuje funkciju gubitka poput linearne i logističke regresije, 
+metode potpornih vektora, stabla odlučivanja, metode k najbližih komšija, neuronskih mreža itd.\\
+Neuronske mreže ili specifičnije potpuno povezane neuronske mreže (multilayer perceptron) su univerzalni aproksimatori funkcija.
+Dokazano je (\latin \cite{hanin2017approximating}) da neuronske mreže sa dovoljno velikim brojem slojeva mogu aproksimirati
+bilo koju kontinualnu funkciju na nekom zatvorenom intervalu. Odnosno za svako $\epsilon$ se može odabrati arhitektura neuronske
+mreže tako da se greška aproksimacije spusti ispod $\epsilon$.\\
+Zahvaljujući ovoj generalnosti su neuronske mreže postale glavni izbor za skoro sve probleme nadgledanog učenja.
+\subsection{Potpuno povezana neuronska mreža (multilayer perceptron)}
+Potpuno povezane neuronske mreže su funkcije oblika:
+\[
+	f(\vec{x}) = a(...a(a(\vec{x} \cdot W_0 + b_0) \cdot W_1 + b_1)...)\cdot W_n + b_n
+\]
+Gde $x \in \mathbb{R}^{n_0}, W_0 \in \mathbb{R}^{n_0 \times n_1}, W_1 \in \mathbb{R}^{n_1 \times n_2},...,W_n \in \mathbb{R}^{n_{n-1} \times m},
+b_0 \in \mathbb{R}^{n_1}, b_1 \in \mathbb{R}^{n_2}, ... , b_n \in \mathbb{R}^{m}$. A $a(\vec{x})$ aktivaciona funkcija.
+$m$ je dimenzija izlaznog sloja, tj. dimenzija vektora $y$ u skupu podataka $(x_0,y_0), (x_1,y_1), ... , (x_n, y_n)$, a $n_0$ dimenzija vektora $x$.
+Neuronska mreža minimizuje funkciju gubitka $L$ odabirom optimalnih matrica težina $W_0, W_1, ... W_n$ i vektora (\textit{biasa}) $b_0, b_1, ... b_n$.
+Neke česte aktivacione funkcije su ReLU, sigmoidna funkcija, tangens hiperbolični itd.\\
+Algoritmi koji minimizuju funkciju greške i pronalaze optimalne vrednosti težina i biasa zasnivaju se na algoritmu gradijentnog spusta.
+Algoritam gradijentnog spusta zasniva se na nalaženju nule gradijenta funkcije gubitka:
+\[ \nabla L(Y,f(x,w_0,w_1,...,w_n,b_0,b_1,...,b_n)) = 0 \]
+Odnosno nuli parcijalnih izvoda:
+\[ \forall(i \in \{0,1,...,n\}) \frac{\partial L}{\partial W_i} = 0, \frac{\partial L}{\partial b_i} = \vec{0} \]
+Eksplicitno nalaženje nula parcijalnih izvoda je često veoma velike složenost ili nemoguće. Pa se u praksi pribegava korišćenju
+numeričkih metoda za aproksimaciju nula. Osnovni algoritam gradijentnog spusta čini sledeća jednačina:
+\[
+	\begin{split}
+		\forall (i \in \{1,2,...,n\})\\
+		W_{i,t} &= W_{i,t-1} - \eta \frac{\partial L}{\partial W_i}(W_{i,t-1})\\
+		b_{i,t} &= b_{i,t-1} - \eta \frac{\partial L}{\partial b_i}(b_{i,t-1})\\
+	\end{split}
+\]
+Gde je $\eta$ hiperparametar (\textit{stopa učenja} / learning rate). Algoritam gradijentnog spusta je numerička metoda prvog reda
+koja nalazi lokalni minimum funkcije tako što se spušta niz gradijent (zato je znak $-$ ispred gradijenta). Algoritam gradijentnog spusta
+konvergira na lokalni minimum pod vrlo ograničavajućim uslovima - na primer dovoljni uslovi za pronalaženje lokalnog minimuma
+funkcije $g(x)$ su da je funkcija lipšic kontinualna i konveksna. U cilju prevazilaženja ovih ograničenja smišljene su mnoge varijante
+algoritma gradijentnog spusta: AdaGrad, AdaDelta, RMSProp, Nestorov, Adam...\\
+U praksi najuspešniji i najčešće korišćen je Adam (adaptive moment estimation) koji je takođe metoda prvog reda. Adam koristi
+takozvani \textit{prvi i drugi moment} (vrednosti sračunate na osnovu prethodnih gradijenata) kako bi se stabilizovala aproksimacija
+gradijenta ili izbegli neki zaravnjeni delovi.
+\subsection{Konvoluciona neuronska mreža}
+Konvoluciona neuronska mreža je specifičan oblik neuronske mreže koji se najčešće koristi kada je potrebno analizirati podatke
+poput slika ili videa. Slike su najčešće podaci visoke dimenzionalnosti, na primer slika dimenzija $100 \times 100$ (sa još 3 kanala
+za r,g i b) je matrica 30000 brojeva. Ako bi potpuno povezani sloj nakon ulaznog sloja imao samo 100 neurona matrica težina bi bila
+matrica dimenzije $(30000 \times 100)$ odnosno imala bi 3 miliona parametara koje je potrebno naučiti. Ovo značajno usporava i otežava
+treniranje pa je poželjno nekako smanjiti broj parametara koje je potrebno optimizovati. Na sreću slike su podaci koji poseduju
+veliku \textit{prostornu lokalnost} - odnosno moguće je izvući puno informacija iz slike posmatrajući samo neki region slike.
+Na primer može se zaključiti da je mačka na slici ukoliko se na dva manja regiona detektuju oči i u sličnom regionu detektuje
+krzno, što je mnogo efikasnije nego posmatranje čitave slike istovremeno. \\
+Glavni element konvolucione neuronske mreže jeste \textit{konvolucioni sloj}.
+\begin{figure}[!ht]
+	\centering
+    \includegraphics{../graph-visuals/convolution-example.pdf}
+	\caption{Primer operacije konvolucije kernela ($2 \times 2$) sa slikom $(3 \times 3)$ sa korakom 1}
+\end{figure}
+Konvolucioni sloj sačinjen je od nekoliko \textit{filtera} / kernela (matrica realnih brojeva) koji su najčešće malih dimenzija ($2\times 2,3 \times 3,5 \ times 5$,...).
+Da bi se dobio izlaz konvolucionog sloja za svaki filter se računa operacija \textit{konvolucije}, odnosno matematički ispravnije
+kros-korelacija filtera i ulazne slike.
+\begin{figure}[!ht]
+	\centering
+    \includegraphics[scale=0.4]{../graph-visuals/conv-filter.png}
+	\caption{Primer konvolucionog sloja}
+\end{figure}
+Najčešće ulazna slika ima dubinu veću od 1. Pa se najčešće za jedan filter računa konvolucija sa čitavom dubinom slike.
+Na primer ako je ulazna slika dimenzije $(100 \ times 100 \times 3)$ ako se uzme filter $5 \times 5$ za konvoluciju bio bi 
+dubine takođe 3. Tj. dimenzija $5 \times 5 \times 3$.
 
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}

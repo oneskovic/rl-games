@@ -16,3 +16,5 @@ documents/test.synctex.gz
 documents/test.tex
 graph-visuals/__pycache__/random_generator.cpython-38.pyc
 documents/main.synctex(busy)
+venv/
+data/
