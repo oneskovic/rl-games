@@ -661,7 +661,7 @@ Glavni element konvolucione neuronske mreže jeste \textit{konvolucioni sloj}.
 	\centering
     \includegraphics{../graph-visuals/convolution-example.pdf}
 	\caption{Primer operacije konvolucije kernela ($2 \times 2$) sa slikom $(3 \times 3)$ sa korakom 1}
-\end{figure}
+\end{figure}\\
 Konvolucioni sloj sačinjen je od nekoliko \textit{filtera} / kernela (matrica realnih brojeva) koji su najčešće malih dimenzija ($2\times 2,3 \times 3,5 \ times 5$,...).
 Da bi se dobio izlaz konvolucionog sloja za svaki filter se računa operacija \textit{konvolucije}, odnosno matematički ispravnije
 kros-korelacija filtera i ulazne slike.
@@ -669,11 +669,89 @@ kros-korelacija filtera i ulazne slike.
 	\centering
     \includegraphics[scale=0.4]{../graph-visuals/conv-filter.png}
 	\caption{Primer konvolucionog sloja}
-\end{figure}
+\end{figure}\\
 Najčešće ulazna slika ima dubinu veću od 1. Pa se najčešće za jedan filter računa konvolucija sa čitavom dubinom slike.
-Na primer ako je ulazna slika dimenzije $(100 \ times 100 \times 3)$ ako se uzme filter $5 \times 5$ za konvoluciju bio bi 
-dubine takođe 3. Tj. dimenzija $5 \times 5 \times 3$.
-
+Na primer ako je ulazna slika dimenzije $(100 \times 100 \times 3)$ ako se uzme filter $(5 \times 5)$ za konvoluciju bio bi 
+dubine takođe 3. Tj. dimenzija $(5 \times 5 \times 3)$. Takođe konvolucioni sloj ima nekoliko različitih filtera pa se za svaki od
+filtera računaju konvolucije, time se dobija dubina u izlazu tog sloja (na primer na slici iznad ima 5 filtera pa je izlaz dubine 5).
+Konvolucioni sloj takođe određuje veličina koraka (tj. \textit{stride}). Stride predstavlja za koliko se filter pomeri prilikom računanja
+proizvoda sa ulaznom slikom. 
+\begin{figure}[!ht]
+	\centering
+    \includegraphics[scale=1]{../graph-visuals/convolution-operation-stride-1.pdf}
+	\caption{Primer konvolucije slike $(4 \times 4 \times 1)$ sa filterom $(2 \times 2)$ sa korakom 1}
+\end{figure}\\
+\begin{figure}[!ht]
+	\centering
+    \includegraphics[scale=1]{../graph-visuals/convolution-operation-stride-2.pdf}
+	\caption{Primer konvolucije slike $(4 \times 4 \times 1)$ sa filterom $(2 \times 2)$ sa korakom 2}
+\end{figure}\\
+Veličina filtera, broj filtera i korak definišu jedan konvolucioni sloj. Takođe, nakon računanja konvolucije
+vrednosti iz rezultujuće matrice se prosleđuju u aktivacionu funkciju, najčešće ReLU. Pored konvolucionih slojeva koriste se
+i takozvani \textit{pooling} slojevi.
+\begin{figure}[!ht]
+	\centering
+    \includegraphics[scale=1]{../graph-visuals/max-pooling.pdf}
+	\caption{Primer max pooling sloja sa dimenzijom $(2 \times 2)$}
+\end{figure}\\
+Pooling slojevi računaju neku funkciju (najčešće maksimum ili prosek) na nekom malom delu slike određenom pomoću veličine kernela,
+slično kao i konvolucija. Cilj pooling slojeva je da smanje dimenzionalnost ulazne slike. Izlazi poslednjeg pooling sloja se
+izravnjaju u vektor koji se zatim prosleđuje u jedan ili više potpuno povezanih slojeva, kako bi se na kraju dobio izlazni vektor
+odgovarajuće dimenzije. Kako konvolucioni slojevi vrše diferencijabilne operacije jasno je da se i na ovakve neuronske mreže mogu
+primeniti algoritmi zasnovani na određivanju gradijenta.
+\section{Deep Q-learning}
+Kada je broj mogućih stanja u nekom markovljevom procesu previše velik nalaženje $Q$ vrednosti za svaki par stanja i akcije je praktično
+nemoguće. Na primer ako treba rešiti igru koja je predstavljena igraču grafički, poput većine video igara ili jednostavnije -
+arkadnih Atari igara, stanje je cela slika koja je predstavljena igraču. Na primer za Atari igre slika je dimenzija $(160 \times 192)$
+i postoji 128 mogućih boja. Pa je broj stanja ograničen odozgo sa $128^{160\cdot 192}$ što je očigledno previše velik broj stanja da bi
+se uopšte čuvao u memoriji.\\
+Međutim, pretpostavka koja ipak omogućava da agent nauči optimalnu politiku je da iako su stanja visoko dimenziona količina informacija je
+prilično ograničena. Na primer verovatno je dovoljno znati da se na ekranu nalaze dva neprijatelja na određenoj udaljenosti kako bi
+se igralo optimalno. Pa je nada da ukoliko se koristi model sposoban da dovoljno apstrakuje stanja da će takav model moći da
+prepozna slična stanja i izgradi optimalnu politiku nad samo neophodnim informacijama. Međutim, aproksimacija $Q$ funkcije pomoću
+nelinearnog modela je težak problem koji je tek skorije u nekoj meri rešen. Poznate su situacije gde nelinearni aproksimatori
+$Q$ funkcije ne konvergiraju na optimalnu $Q$ vrednost, šta više čak i divergiraju u potpunosti (\latin \cite{NEURIPS2018_5fd0245f}). 
+Međutim ukoliko se $Q$ funkcija aproksimira neuronskom mrežom i treniranje se vrši na specifičan način u praksi je često moguće dobiti
+veoma dobre rezultate.\\
+Kako bi se aproksimirala $Q$ funkcija posmatrajmo jednačinu za stohastičku verziju nalaženja optimalne $Q$ vrednosti:\\
+Ako je data epizoda: $E: s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$\\
+Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
+\[ 
+	Q_n(s,a) =
+	\begin{cases}
+		(1-\alpha_n)Q_{n-1}(s,a) + \alpha_n (r_n + \gamma \text{max}_{a'}Q_{n-1}(s',a')), & \text{ako } s_n = s, a_n = a\\
+		Q_{n-1}(s,a), & \text{u suprotnom}
+	\end{cases}
+\]
+Ili u alternativnoj, ekvivalentnoj formulaciji:
+\[ 
+	Q_n(s,a) =
+	\begin{cases}
+		Q_{n-1}(s,a) + \alpha_n (r_n + \gamma \text{max}_{a'}Q_{n-1}(s',a') - Q_{n-1}(s,a)), & \text{ako } s_n = s, a_n = a\\
+		Q_{n-1}(s,a), & \text{u suprotnom}
+	\end{cases}
+\]
+Vrednost $r_n + \gamma \text{max}_{a'}Q_{n-1}(s',a') - Q_{n-1}(s,a)$ naziva se TD-greška (temporal difference error). Ako se ovo
+posmatra kao vrednost koju treba minimizovati može se upotrebiti neuronska mreža na sledeći način:
+Preformulišimo $Q$ funkciju kao neuronsku mrežu, sa parametrima $\theta$ odnosno $Q(s,a,\theta)$. Pa je TD greška ekvivalentna:
+\[L_n(\theta_n) = (r_n + \gamma \text{max}_{a'}Q_{n-1}(s'_n,a',\theta_{n-1}) - Q_{n-1}(s_n,a_n,\theta_n))^2 \]
+Učenje teče isto kao i za normalne neuronske mreže tako što se za svaki uzorak $(s_n,a_n,r_n,s_n')$ parametri mreže menjaju na sledeći način:
+\[ \theta_n = \theta_{n-1} - \eta  \nabla L_n(\theta_{n-1}) \]
+\medskip\\
+Ovako formulisano učenje međutim nije preterano uspešno. Ako se učenje posmatra kao regresija i vrednost $r_n + \gamma \text{max}_{a'}Q_{n-1}(s'_n,a',\theta_{n-1})$ 
+kao vrednost koju treba predvideti vidi se da se premenljiva koju treba predvideti veoma često menja što destabilizuje učenje, takođe
+pokazano je da ovakav način učenja često precenjuje vrednost nagrade (\latin \cite{van2016deep}) pa
+se u praksi fiksiraju dva seta paramatara $\theta$ i $\theta'$. Pa se funkcija gubitka definiše kao:
+\[L_n(\theta_n) = (r_n + \gamma \text{max}_{a'}Q_{n-1}(s'_n,a',\theta) - Q_{n-1}(s_n,a_n,\theta_n'))^2 \]
+Pa se na neki fiksan broj koraka razmenjuju mesta mrežama $\theta$ i $\theta'$.
+Takođe moguće je i formulisati funkciju gubitka na sledeći način kako bi se izbeglo precenjivanje nagrade:
+\[L_n(\theta_n) = (r_n + \gamma Q(s',\text{argmax}_{a'}Q_{n-1}(s'_n,a',\theta),\theta_n') - Q_{n-1}(s_n,a_n,\theta_n'))^2 \]
+Ovo se naziva \textit{Double DQN} (\latin \cite{van2016deep}).
+Pored ovih tehnika, primećeno je da kada se neuronske mreže koriste za aproksimaciju $Q$ funkcije, često dolazi do divergencije ili
+lošeg učenja zbog velike korelacije među $Q$ vrednostima ako četvorke $(s,a,s',r)$ predstavljaju uzastopne četvorke neke epizode.
+Kako bi se izbegla korelacija četvorke iskustva $(s,a,s',r)$ koje mreža generiše prilikom interakcije sa okruženjem dodaju se 
+u velik niz iskustava odakle se prilikom treniranja biraju nasumične četvorke $(s,a,s',r)$ na kojima se mreža trenira. Ovo se naziva
+\textit{experience replay} (\latin \cite{mnih2015human}).
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}
 \latin
