@@ -120,5 +120,3 @@ def test_value_iteration():
             print(best_policy)
             print(optimal_policy)
  
-if __name__ == '__main__':
-    test_value_iteration()
