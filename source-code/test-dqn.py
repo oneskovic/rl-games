@@ -9,11 +9,13 @@ from replay_buffer2 import ReplayBuffer
 from mdp_env import MDPEnv
 import gym
 
-def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt):
+def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     total_reward = 0
     for _ in range(episode_cnt):
         current_state = env.reset()
         for _ in range(max_step_cnt):
+            if render:
+                env.render()
             action = int(agent.select_action(current_state,greedy=True))
             next_state, reward, done, _ = env.step(action)
             current_state = next_state
@@ -26,7 +28,7 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt):
 env = gym.make('CartPole-v1')
 dqn_agent = DQNAgent((4,),2)
 
-episode_cnt = 10000
+episode_cnt = 800
 total_train_steps = 1000000
 eval_freq = 100
 max_buffer_len = 10000
@@ -34,18 +36,19 @@ swap_interval = 1000
 batch_size = 64
 learning_starts = 100
 reward_history = []
-max_t = 100
+training_reward_history = []
+max_t = 1000
 
 buffer = ReplayBuffer(env, learning_starts)
 
-avg_reward = 0
-for episode in range(1,1001):
+for episode in range(1,episode_cnt+1):
     current_state = env.reset()
     done = False
+    episode_reward = 0
     while not done:
         action = int(dqn_agent.select_action(current_state))
         next_state, reward, done, _ = env.step(action)
-        avg_reward += reward
+        episode_reward += reward
         buffer.add(current_state, action, reward, next_state, done)
         current_state = next_state
         
@@ -54,8 +57,12 @@ for episode in range(1,1001):
             sample = buffer.sample_batch(batch_size)
             loss = dqn_agent.update_batch(sample)
 
-    print(f'Episode {episode} Average reward: {avg_reward/episode} Epsilon: {dqn_agent.eps}')
+    training_reward_history.append(episode_reward)
+    avg_reward = np.mean(training_reward_history[-30:])
+    print(f'Episode {episode} Average reward: {avg_reward:.2f} Epsilon: {dqn_agent.eps:.3f}')
     if episode % eval_freq == 0:
             reward_history.append(eval_agent(env, dqn_agent, 5, max_t))
+
+eval_agent(env, dqn_agent, 5, 1000, render=True)
 plt.plot(reward_history)
 plt.show()
