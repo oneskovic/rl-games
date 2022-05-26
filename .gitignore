@@ -18,3 +18,5 @@ graph-visuals/__pycache__/random_generator.cpython-38.pyc
 documents/main.synctex(busy)
 venv/
 data/
+*.pyc
+__pycache__/
