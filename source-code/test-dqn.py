@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 from replay_buffer import ReplayBuffer
 import gym
 import pickle
+from ray.rllib.env.wrappers.atari_wrappers import wrap_deepmind
+import gym
+
 from config import TORCH_DEVICE
 
 def transform_state(state):
@@ -28,15 +31,15 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     print(f'Average reward: {total_reward/episode_cnt}')
     return total_reward / episode_cnt
 
-env = gym.make("ALE/Breakout-v5")
+env = wrap_deepmind(gym.make("Breakout-v0"))
 
 dqn_architecture = [
-    torch.nn.Conv2d(in_channels=3, out_channels=16, kernel_size=8, stride=4),
+    torch.nn.Conv2d(in_channels=4, out_channels=16, kernel_size=8, stride=4),
     torch.nn.ReLU(),
     torch.nn.Conv2d(in_channels=16, out_channels=32, kernel_size=4, stride=2),
     torch.nn.ReLU(),
     torch.nn.Flatten(1,3),
-    torch.nn.Linear(13824, 256),
+    torch.nn.Linear(2592, 256),
     torch.nn.ReLU(),
     torch.nn.Linear(256, env.action_space.n)
 ]
@@ -55,7 +58,7 @@ model_save_freq = 100
 reward_history = []
 training_reward_history = []
 
-buffer = ReplayBuffer((3,210,160), learning_starts, max_buffer_len)
+buffer = ReplayBuffer((4,84,84), learning_starts, max_buffer_len)
 
 learning_started = False
 for episode in range(1,episode_cnt+1):
