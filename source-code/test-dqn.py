@@ -5,54 +5,67 @@ import matplotlib.pyplot as plt
 from replay_buffer import ReplayBuffer
 import gym
 
+def transform_state(state):
+    state = state.astype(np.float32)
+    state = state / 255.0
+    return np.moveaxis(state, -1, 0)
+
 def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     total_reward = 0
     for _ in range(episode_cnt):
         current_state = env.reset()
+        current_state = transform_state(current_state)
         for _ in range(max_step_cnt):
             if render:
                 env.render()
             action = int(agent.select_action(current_state,greedy=True))
             next_state, reward, done, _ = env.step(action)
             current_state = next_state
+            current_state = transform_state(current_state)
             total_reward += reward
             if done:
                 break
     print(f'Average reward: {total_reward/episode_cnt}')
     return total_reward / episode_cnt
 
-env = gym.make('CartPole-v1')
+env = gym.make("ALE/Breakout-v5")
 
 dqn_architecture = [
-    torch.nn.Linear(env.observation_space.shape[0], 128),
+    torch.nn.Conv2d(in_channels=3, out_channels=16, kernel_size=8, stride=4),
     torch.nn.ReLU(),
-    torch.nn.Linear(128, 128),
+    torch.nn.Conv2d(in_channels=16, out_channels=32, kernel_size=4, stride=2),
     torch.nn.ReLU(),
-    torch.nn.Linear(128, env.action_space.n)
+    torch.nn.Flatten(1,3),
+    torch.nn.Linear(13824, 256),
+    torch.nn.ReLU(),
+    torch.nn.Linear(256, env.action_space.n)
 ]
-dqn_agent = DQNAgent((4,),2,architecture=dqn_architecture)
+dqn_agent = DQNAgent(env.observation_space.shape,env.action_space.n,architecture=dqn_architecture, lr=0.00025,eps_min=0.1)
 
 episode_cnt = 800
 total_train_steps = 1000000
 eval_freq = 100
-max_buffer_len = 10000
-swap_interval = 1000
-batch_size = 64
-learning_starts = 100
-max_t = 1000
+max_buffer_len = 100000
+swap_interval = 3000
+batch_size = 32
+learning_starts = 10000
+max_t = 10000
 eval_episodes = 10
 reward_history = []
 training_reward_history = []
 
-buffer = ReplayBuffer(env, learning_starts)
+buffer = ReplayBuffer((3,210,160), learning_starts, max_buffer_len)
 
 for episode in range(1,episode_cnt+1):
     current_state = env.reset()
+    current_state = transform_state(current_state)
+    
     done = False
     episode_reward = 0
     while not done:
         action = int(dqn_agent.select_action(current_state))
         next_state, reward, done, _ = env.step(action)
+        next_state = transform_state(next_state)
         episode_reward += reward
         buffer.add(current_state, action, reward, next_state, done)
         current_state = next_state

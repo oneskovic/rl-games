@@ -33,7 +33,8 @@ class DQNAgent:
         self.loss_fn = torch.nn.MSELoss()
 
     def select_action(self, state, greedy=False):
-        state = torch.from_numpy(state).float().to(TORCH_DEVICE)
+        state = torch.from_numpy(state).float().unsqueeze(0).to(TORCH_DEVICE)
+        
         # Select action greedily (used when evaluating)
         if greedy: 
             with torch.no_grad():
