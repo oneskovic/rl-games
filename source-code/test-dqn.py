@@ -86,7 +86,7 @@ for episode in range(1,episode_cnt+1):
     if episode % eval_freq == 0:
             reward_history.append(eval_agent(env, dqn_agent, eval_episodes, max_t))
     if episode % model_save_freq == 0:
-        pickle.dump(open(f'models/{episode}_model.pkl','wb+'), dqn_agent.model.cpu())
+        pickle.dump(dqn_agent.model.cpu(), open(f'models/{episode}_model.pkl','wb+'))
         dqn_agent.model.to(TORCH_DEVICE)
         
 
