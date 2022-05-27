@@ -33,15 +33,16 @@ class DQNAgent:
         self.loss_fn = torch.nn.MSELoss()
 
     def select_action(self, state, greedy=False):
+        state = torch.from_numpy(state).float().to(TORCH_DEVICE)
         # Select action greedily (used when evaluating)
         if greedy: 
             with torch.no_grad():
-                return self.model(torch.tensor(state).float()).argmax()
+                return self.model(state).argmax()
         # Select action epsilon greedy
         else:      
             if torch.rand(1) > self.eps:
                 with torch.no_grad():
-                    return self.model(torch.tensor(state).float()).argmax()
+                    return self.model(state).argmax()
             else:
                 return torch.randint(0, self.n_actions, (1, 1))
 
