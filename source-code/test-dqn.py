@@ -1,12 +1,8 @@
-from random_generator import get_random_mdp
-from policy_improvement import q_value_iteration_matrix_form
 from dqn_agent import DQNAgent
 import numpy as np
-from collections import deque 
 import torch
 import matplotlib.pyplot as plt
-from replay_buffer2 import ReplayBuffer
-from mdp_env import MDPEnv
+from replay_buffer import ReplayBuffer
 import gym
 
 def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
@@ -26,7 +22,15 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     return total_reward / episode_cnt
 
 env = gym.make('CartPole-v1')
-dqn_agent = DQNAgent((4,),2)
+
+dqn_architecture = [
+    torch.nn.Linear(env.observation_space.shape[0], 128),
+    torch.nn.ReLU(),
+    torch.nn.Linear(128, 128),
+    torch.nn.ReLU(),
+    torch.nn.Linear(128, env.action_space.n)
+]
+dqn_agent = DQNAgent((4,),2,architecture=dqn_architecture)
 
 episode_cnt = 800
 total_train_steps = 1000000
@@ -35,9 +39,10 @@ max_buffer_len = 10000
 swap_interval = 1000
 batch_size = 64
 learning_starts = 100
+max_t = 1000
+eval_episodes = 10
 reward_history = []
 training_reward_history = []
-max_t = 1000
 
 buffer = ReplayBuffer(env, learning_starts)
 
@@ -61,8 +66,8 @@ for episode in range(1,episode_cnt+1):
     avg_reward = np.mean(training_reward_history[-30:])
     print(f'Episode {episode} Average reward: {avg_reward:.2f} Epsilon: {dqn_agent.eps:.3f}')
     if episode % eval_freq == 0:
-            reward_history.append(eval_agent(env, dqn_agent, 5, max_t))
+            reward_history.append(eval_agent(env, dqn_agent, eval_episodes, max_t))
 
 eval_agent(env, dqn_agent, 5, 1000, render=True)
-plt.plot(reward_history)
+plt.plot(training_reward_history)
 plt.show()

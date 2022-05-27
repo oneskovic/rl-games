@@ -1,40 +1,44 @@
 # Implements a dqn agent using pytorch
 import torch
+from config import TORCH_DEVICE
 class DQNAgent:
-    def __init__(self, input_shape, n_actions):
+    def __init__(self, input_shape, n_actions, gamma = 0.99, eps = 1.0, eps_min = 0.01, eps_decay = 0.999, lr = 0.0001, target_update_interval = 20, architecture = None):
         self.input_shape = input_shape
         self.n_actions = n_actions
 
         # Hyperparameters
-        self.gamma = 0.99
-        self.eps = 1.0
-        self.eps_decay = 0.999
-        self.eps_min = 0.001
-        self.learning_rate = 0.0001
-        self.target_update_interval = 20
+        self.gamma = gamma
+        self.eps = eps
+        self.eps_decay = eps_decay
+        self.eps_min = eps_min
+        self.learning_rate = lr
+        self.target_update_interval = target_update_interval
         self.target_update_remaing = self.target_update_interval
 
-        # Model architecture
-        architecture = [
-            torch.nn.Linear(input_shape[0], 64),
-            torch.nn.ReLU(),
-            torch.nn.Linear(64, 64),
-            torch.nn.ReLU(),
-            torch.nn.Linear(64, n_actions)
-        ]
+        if architecture is None:
+            # Model architecture
+            architecture = [
+                torch.nn.Linear(input_shape[0], 64),
+                torch.nn.ReLU(),
+                torch.nn.Linear(64, 64),
+                torch.nn.ReLU(),
+                torch.nn.Linear(64, n_actions)
+            ]
 
         # Initialize the model and target model, optimizer and loss function
-        self.model = torch.nn.Sequential(*architecture)
+        self.model = torch.nn.Sequential(*architecture).to(TORCH_DEVICE)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = self.learning_rate)
-        self.target_model = torch.nn.Sequential(*architecture)
+        self.target_model = torch.nn.Sequential(*architecture).to(TORCH_DEVICE)
         self.target_model.load_state_dict(self.model.state_dict())
         self.loss_fn = torch.nn.MSELoss()
 
     def select_action(self, state, greedy=False):
-        if greedy: # Select action greedily (used when evaluating)
+        # Select action greedily (used when evaluating)
+        if greedy: 
             with torch.no_grad():
                 return self.model(torch.tensor(state).float()).argmax()
-        else:      # Select action epsilon greedy
+        # Select action epsilon greedy
+        else:      
             if torch.rand(1) > self.eps:
                 with torch.no_grad():
                     return self.model(torch.tensor(state).float()).argmax()
