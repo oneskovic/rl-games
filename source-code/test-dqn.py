@@ -31,15 +31,17 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     print(f'Average reward: {total_reward/episode_cnt}')
     return total_reward / episode_cnt
 
-env = wrap_deepmind(gym.make("Breakout-v0"))
+env = wrap_deepmind(gym.make("ALE/Pong-v5"))
 
 dqn_architecture = [
-    torch.nn.Conv2d(in_channels=4, out_channels=16, kernel_size=8, stride=4),
+    torch.nn.Conv2d(in_channels=4, out_channels=32, kernel_size=8, stride=4),
     torch.nn.ReLU(),
-    torch.nn.Conv2d(in_channels=16, out_channels=32, kernel_size=4, stride=2),
+    torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2),
+    torch.nn.ReLU(),
+    torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
     torch.nn.ReLU(),
     torch.nn.Flatten(1,3),
-    torch.nn.Linear(2592, 256),
+    torch.nn.Linear(3136, 256),
     torch.nn.ReLU(),
     torch.nn.Linear(256, env.action_space.n)
 ]
