@@ -5,10 +5,9 @@ import matplotlib.pyplot as plt
 from replay_buffer import ReplayBuffer
 import gym
 import pickle
+from config import TORCH_DEVICE
 
 def transform_state(state):
-    state = state.astype(np.float32)
-    state = state / 255.0
     return np.moveaxis(state, -1, 0)
 
 def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
@@ -87,7 +86,8 @@ for episode in range(1,episode_cnt+1):
     if episode % eval_freq == 0:
             reward_history.append(eval_agent(env, dqn_agent, eval_episodes, max_t))
     if episode % model_save_freq == 0:
-        pickle.dump(open((f'models/{episode}_model.pkl'),'wb+'), dqn_agent)
+        pickle.dump(open(f'models/{episode}_model.pkl','wb+'), dqn_agent.model.cpu())
+        dqn_agent.model.to(TORCH_DEVICE)
         
 
 eval_agent(env, dqn_agent, 5, 1000, render=True)
