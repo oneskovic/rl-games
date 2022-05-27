@@ -503,13 +503,14 @@ U praksi ove vrednosti najčešće nisu poznate, a kasnije će se razmatrati i p
 uopšte čuvale ili sračunale. Pošto nije moguće znati prave vrednosti, neophodno je aproksimirati verovatnoću.
 Pošto je belmanov operator očekivanja:
 \[ 	B^{\pi}(V)_s = \sum_{s'}T(s,a,s')(R(s,a,s') + \gamma V_{s'}) \]
+Gde je $a = \pi(s)$.\\
 Primetimo da se data suma može razdvojiti:
 \[ 	B^{\pi}(V)_s = \sum_{s'}T(s,a,s')R(s,a,s') + \sum_{s'}T(s,a,s')\gamma V_{s'}\]
 Dodatno, primetimo da je $\sum_{s'}T(s,a,s')R(s,a,s')$ očekivana vrednost nagrade iz stanja $s$, kada se izvrši akcija $a$, odnosno:
 $\sum_{s'}T(s,a,s')R(s,a,s') = \mathbb{E}(R | s,a)$.
 Slično, suma $\sum_{s'}T(s,a,s') V_{s'}$ je očekivana vrednost buduće nagrade, odnosno:
 $\sum_{s'}T(s,a,s')\gamma V_{s'} = \gamma \mathbb{E}(V | s, a)$. Pa se belmanov operator može ekvivalentno zapisati kao:
-\[ 	B^{\pi}(V)_s = \text{max}_{a}\left( \mathbb{E}(R | s,a) + \gamma \mathbb{E}(V | s, a) \right) \]
+\[ 	B^{\pi}(V)_s = \mathbb{E}(R | s,a) + \gamma \mathbb{E}(V | s, a) \]
 U cilju aproksimacije potrebnih očekivanih vrednosti biće dokazane sledeće leme:
 \lem {Za red $E_n = \frac{1}{n+1}(n E_{n-1} + x_n), E_0 = x_0$ važi $E_n = \frac{1}{n+1}\sum_{i=0}^n x_i$}\\
 Lema će biti dokazana indukcijom. Induktivna hipoteza je: $E_n = \frac{1}{n+1}\sum_{i=0}^n x_i$.
@@ -662,7 +663,7 @@ Glavni element konvolucione neuronske mreže jeste \textit{konvolucioni sloj}.
     \includegraphics{../graph-visuals/convolution-example.pdf}
 	\caption{Primer operacije konvolucije kernela ($2 \times 2$) sa slikom $(3 \times 3)$ sa korakom 1}
 \end{figure}\\
-Konvolucioni sloj sačinjen je od nekoliko \textit{filtera} / kernela (matrica realnih brojeva) koji su najčešće malih dimenzija ($2\times 2,3 \times 3,5 \ times 5$,...).
+Konvolucioni sloj sačinjen je od nekoliko \textit{filtera} / kernela (matrica realnih brojeva) koji su najčešće malih dimenzija ($2\times 2,3 \times 3,5 \times 5$,...).
 Da bi se dobio izlaz konvolucionog sloja za svaki filter se računa operacija \textit{konvolucije}, odnosno matematički ispravnije
 kros-korelacija filtera i ulazne slike.
 \begin{figure}[!ht]

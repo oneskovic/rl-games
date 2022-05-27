@@ -1,1 +1,1 @@
-TORCH_DEVICE = 'cuda'
+TORCH_DEVICE = 'cpu'
