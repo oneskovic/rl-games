@@ -45,13 +45,13 @@ dqn_architecture = [
 ]
 dqn_agent = DQNAgent(env.observation_space.shape,env.action_space.n,architecture=dqn_architecture, lr=0.00025,eps_min=0.1)
 
-episode_cnt = 800
+episode_cnt = 2000
 total_train_steps = 1000000
 eval_freq = 100
-max_buffer_len = 10000
+max_buffer_len = 100000
 swap_interval = 3000
 batch_size = 32
-learning_starts = 2000
+learning_starts = 10000
 max_t = 10000
 eval_episodes = 10
 model_save_freq = 100
