@@ -4,6 +4,7 @@ import torch
 import matplotlib.pyplot as plt
 from replay_buffer import ReplayBuffer
 import gym
+import pickle
 
 def transform_state(state):
     state = state.astype(np.float32)
@@ -45,17 +46,19 @@ dqn_agent = DQNAgent(env.observation_space.shape,env.action_space.n,architecture
 episode_cnt = 800
 total_train_steps = 1000000
 eval_freq = 100
-max_buffer_len = 100000
+max_buffer_len = 10000
 swap_interval = 3000
 batch_size = 32
-learning_starts = 10000
+learning_starts = 2000
 max_t = 10000
 eval_episodes = 10
+model_save_freq = 100
 reward_history = []
 training_reward_history = []
 
 buffer = ReplayBuffer((3,210,160), learning_starts, max_buffer_len)
 
+learning_started = False
 for episode in range(1,episode_cnt+1):
     current_state = env.reset()
     current_state = transform_state(current_state)
@@ -68,6 +71,9 @@ for episode in range(1,episode_cnt+1):
         next_state = transform_state(next_state)
         episode_reward += reward
         buffer.add(current_state, action, reward, next_state, done)
+        if buffer.mem_count >= learning_starts and not learning_started:
+            print('----- Learning started -----')
+            learning_started = True
         current_state = next_state
         
         # Train the agent on random sample
@@ -80,6 +86,9 @@ for episode in range(1,episode_cnt+1):
     print(f'Episode {episode} Average reward: {avg_reward:.2f} Epsilon: {dqn_agent.eps:.3f}')
     if episode % eval_freq == 0:
             reward_history.append(eval_agent(env, dqn_agent, eval_episodes, max_t))
+    if episode % model_save_freq == 0:
+        pickle.dump(open((f'models/{episode}_model.pkl'),'wb+'), dqn_agent)
+        
 
 eval_agent(env, dqn_agent, 5, 1000, render=True)
 plt.plot(training_reward_history)
