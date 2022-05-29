@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{sample\PYGZus{}batch}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{batch\PYGZus{}size}\PYG{p}{):}
+	\PYG{n}{mem\PYGZus{}max} \PYG{o}{=} \PYG{n+nb}{min}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{mem\PYGZus{}count}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{mem\PYGZus{}size}\PYG{p}{)}
+	\PYG{n}{batch\PYGZus{}indices} \PYG{o}{=} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{randint}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{n}{mem\PYGZus{}max}\PYG{p}{,(}\PYG{n}{batch\PYGZus{}size}\PYG{p}{,))}
+
+	\PYG{n}{states}  \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{states}\PYG{p}{[}\PYG{n}{batch\PYGZus{}indices}\PYG{p}{]}\PYG{o}{.}\PYG{n}{float}\PYG{p}{()}
+	\PYG{n}{actions} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{actions}\PYG{p}{[}\PYG{n}{batch\PYGZus{}indices}\PYG{p}{]}
+	\PYG{n}{rewards} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{rewards}\PYG{p}{[}\PYG{n}{batch\PYGZus{}indices}\PYG{p}{]}
+	\PYG{n}{states\PYGZus{}} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{states\PYGZus{}}\PYG{p}{[}\PYG{n}{batch\PYGZus{}indices}\PYG{p}{]}\PYG{o}{.}\PYG{n}{float}\PYG{p}{()}
+	\PYG{n}{dones}   \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dones}\PYG{p}{[}\PYG{n}{batch\PYGZus{}indices}\PYG{p}{]}
+
+	\PYG{k}{return} \PYG{p}{(}\PYG{n}{states}\PYG{p}{,} \PYG{n}{actions}\PYG{p}{,} \PYG{n}{rewards}\PYG{p}{,} \PYG{n}{states\PYGZus{}}\PYG{p}{,} \PYG{n}{dones}\PYG{p}{)}
+\end{Verbatim}

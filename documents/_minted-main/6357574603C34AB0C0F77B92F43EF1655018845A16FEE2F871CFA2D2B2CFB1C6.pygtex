@@ -1,0 +1,12 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{add}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{state}\PYG{p}{,} \PYG{n}{action}\PYG{p}{,} \PYG{n}{reward}\PYG{p}{,} \PYG{n}{state\PYGZus{}}\PYG{p}{,} \PYG{n}{done}\PYG{p}{):}
+	\PYG{n}{mem\PYGZus{}index} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{mem\PYGZus{}count} \PYG{o}{\PYGZpc{}} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{mem\PYGZus{}size}
+	
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{states}\PYG{p}{[}\PYG{n}{mem\PYGZus{}index}\PYG{p}{]}  \PYG{o}{=} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{tensor}\PYG{p}{(}\PYG{n}{state}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n}{torch}\PYG{o}{.}\PYG{n}{float32}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{actions}\PYG{p}{[}\PYG{n}{mem\PYGZus{}index}\PYG{p}{]} \PYG{o}{=} \PYG{n}{action}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{rewards}\PYG{p}{[}\PYG{n}{mem\PYGZus{}index}\PYG{p}{]} \PYG{o}{=} \PYG{n}{reward}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{states\PYGZus{}}\PYG{p}{[}\PYG{n}{mem\PYGZus{}index}\PYG{p}{]} \PYG{o}{=} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{tensor}\PYG{p}{(}\PYG{n}{state\PYGZus{}}\PYG{p}{,} \PYG{n}{dtype}\PYG{o}{=}\PYG{n}{torch}\PYG{o}{.}\PYG{n}{float32}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{dones}\PYG{p}{[}\PYG{n}{mem\PYGZus{}index}\PYG{p}{]} \PYG{o}{=}  \PYG{n}{done}
+
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{mem\PYGZus{}count} \PYG{o}{+=} \PYG{l+m+mi}{1}
+\end{Verbatim}

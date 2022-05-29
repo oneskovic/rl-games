@@ -24,8 +24,8 @@ class ReplayBuffer:
         self.mem_count += 1
     
     def sample_batch(self, batch_size):
-        MEM_MAX = min(self.mem_count, self.mem_size)
-        batch_indices = torch.randint(0,MEM_MAX,(batch_size,))
+        mem_max = min(self.mem_count, self.mem_size)
+        batch_indices = torch.randint(0,mem_max,(batch_size,))
 
         states  = self.states[batch_indices].float()
         actions = self.actions[batch_indices]
