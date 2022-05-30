@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{env} \PYG{o}{=} \PYG{n}{gym}\PYG{o}{.}\PYG{n}{make}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}CartPole\PYGZhy{}v1\PYGZdq{}}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{} Na primer inicijalizuje se okruženje cartpole}
+\PYG{n}{dqn\PYGZus{}agent} \PYG{o}{=} \PYG{n}{DQNAgent}\PYG{p}{(}\PYG{n}{env}\PYG{o}{.}\PYG{n}{observation\PYGZus{}space}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{,} \PYG{n}{env}\PYG{o}{.}\PYG{n}{action\PYGZus{}space}\PYG{o}{.}\PYG{n}{n}\PYG{p}{)}
+\PYG{n}{buffer} \PYG{o}{=} \PYG{n}{ReplayBuffer}\PYG{p}{(}\PYG{n}{env}\PYG{o}{.}\PYG{n}{observation\PYGZus{}space}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{,} \PYG{n}{learning\PYGZus{}starts}\PYG{p}{,} \PYG{n}{max\PYGZus{}buffer\PYGZus{}len}\PYG{p}{)}
+
+\PYG{n}{train\PYGZus{}step\PYGZus{}cnt} \PYG{o}{=} \PYG{l+m+mi}{0}
+\PYG{k}{while} \PYG{n}{train\PYGZus{}step\PYGZus{}cnt} \PYG{o}{\PYGZlt{}} \PYG{n}{total\PYGZus{}train\PYGZus{}steps}\PYG{p}{:}
+    \PYG{n}{current\PYGZus{}state} \PYG{o}{=} \PYG{n}{env}\PYG{o}{.}\PYG{n}{reset}\PYG{p}{()}
+
+    \PYG{n}{done} \PYG{o}{=} \PYG{k+kc}{False}
+    \PYG{k}{while} \PYG{o+ow}{not} \PYG{n}{done}\PYG{p}{:}
+        \PYG{n}{action} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{dqn\PYGZus{}agent}\PYG{o}{.}\PYG{n}{select\PYGZus{}action}\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{p}{))}
+        \PYG{n}{next\PYGZus{}state}\PYG{p}{,} \PYG{n}{reward}\PYG{p}{,} \PYG{n}{done}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o}{=} \PYG{n}{env}\PYG{o}{.}\PYG{n}{step}\PYG{p}{(}\PYG{n}{action}\PYG{p}{)}
+        \PYG{n}{buffer}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{n}{current\PYGZus{}state}\PYG{p}{,} \PYG{n}{action}\PYG{p}{,} \PYG{n}{reward}\PYG{p}{,} \PYG{n}{next\PYGZus{}state}\PYG{p}{,} \PYG{n}{done}\PYG{p}{)}
+        \PYG{n}{current\PYGZus{}state} \PYG{o}{=} \PYG{n}{next\PYGZus{}state}
+
+        \PYG{c+c1}{\PYGZsh{} Agent se trenira na nasumičnom uzorku iz bafera}
+        \PYG{k}{if} \PYG{n}{buffer}\PYG{o}{.}\PYG{n}{can\PYGZus{}sample}\PYG{p}{():}
+            \PYG{n}{sample} \PYG{o}{=} \PYG{n}{buffer}\PYG{o}{.}\PYG{n}{sample\PYGZus{}batch}\PYG{p}{(}\PYG{n}{batch\PYGZus{}size}\PYG{p}{)}
+            \PYG{n}{loss} \PYG{o}{=} \PYG{n}{dqn\PYGZus{}agent}\PYG{o}{.}\PYG{n}{update\PYGZus{}batch}\PYG{p}{(}\PYG{n}{sample}\PYG{p}{)}
+            \PYG{n}{train\PYGZus{}step\PYGZus{}cnt} \PYG{o}{+=} \PYG{l+m+mi}{1}
+\end{Verbatim}

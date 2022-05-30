@@ -777,7 +777,115 @@ def sample_batch(self, batch_size):
 	return (states, actions, rewards, states_, dones)
 \end{minted}
 Kao što se može videti iz koda takođe se čuvaju i vrednosti bool tipa koje označavaju da li je epizoda završena sa tim uzorkom $(s,a,r,s')$.
-\section{Neuronska mreža}
+\section{DQN Algoritam}
+U klasi DQNAgent implementiran je glavni deo Deep Q-learning algoritma.
+U konstruktor klase prosleđuje se niz PyTorch slojeva, na primer:
+\begin{minted}{python}
+architecture = [
+                torch.nn.Linear(input_shape[0], 64),
+                torch.nn.ReLU(),
+                torch.nn.Linear(64, 64),
+                torch.nn.ReLU(),
+                torch.nn.Linear(64, n_actions)
+            ]
+\end{minted}
+
+Gde su \texttt{input\textunderscore shape} i \texttt{n\textunderscore actions} parametri koji predstavljaju dimenzije stanja koje proizvodi okruženje
+i broj mogućih akcija u okruženju.
+U konstruktoru klase se zatim inicijalizuju sledeće promenljive (neuronska mreža, algoritam za optimizaciju, ciljna mreža i loss funkcija):
+\begin{minted}{python}
+	self.model = torch.nn.Sequential(*architecture).to(TORCH_DEVICE)
+	self.optimizer = torch.optim.Adam(self.model.parameters(), 
+		lr = self.learning_rate)
+	self.target_model = torch.nn.Sequential(*architecture).to(TORCH_DEVICE)
+	self.target_model.load_state_dict(self.model.state_dict())
+	self.loss_fn = torch.nn.SmoothL1Loss()
+\end{minted}
+Definisane su i dve najbitnije metode, \texttt{select\textunderscore action}:
+\begin{minted}{python}
+def select_action(self, state, greedy=False):
+        state = torch.from_numpy(state).float().unsqueeze(0).to(TORCH_DEVICE)
+        
+        # Akcija se bira pohlepno (koristi se pri evaluaciji)
+        if greedy: 
+            with torch.no_grad():
+                return self.model(state).argmax()
+        # Akcija se bira po epsilon-greedy strategiji 
+		# (sa verovatnoćom epsilon se bira nasumična akcija)
+        else:      
+            if torch.rand(1) > self.eps:
+                with torch.no_grad():
+                    return self.model(state).argmax()
+            else:
+                return torch.randint(0, self.n_actions, (1, 1))
+\end{minted}
+I metoda \texttt{update\textunderscore batch}:
+\begin{minted}{python}
+def update_batch(self, batch_samples):
+	batch_states, selected_actions, batch_rewards, batch_next_states, batch_done = batch_samples
+	selected_actions = selected_actions.reshape(-1, 1)
+
+	# Predviđaju se Q vrednosti pomoću trenutnog modela
+	pred_q = self.model(batch_states)
+	# Izdvajaju se samo vrednosti za akcije koje su zapravo izvršene
+	pred_q = pred_q.gather(1, selected_actions).flatten()
+
+	# Predviđaju se Q vrednosti pomoću ciljnog modela 
+	true_q = self.gamma * self.target_model(batch_next_states).max(1)[0] * (~batch_done) + batch_rewards
+
+	# Računa se loss funkcija i poziva se backward
+	loss = self.loss_fn(pred_q, true_q)
+	self.optimizer.zero_grad()
+	loss.backward()
+
+	# Vrednosti gradijenta se ograničavaju
+	for param in self.model.parameters():
+		param.grad.data.clamp_(-1, 1)
+	self.optimizer.step()
+
+	# Smanjuje se trenutno epsilon
+	if self.eps > self.eps_min:
+		self.eps *= self.eps_decay
+
+	# Ako je potrebno poziva se metoda za kopiranje težina u ciljnu mrežu
+	self.target_update_remaing -= 1
+	if self.target_update_remaing <= 0:
+		self.update_target_model()
+		self.target_update_remaing = self.target_update_interval
+
+	return loss.item()
+\end{minted}
+
+\section{Treniranje}
+Za potpunu implementaciju potrebna je još glavna petlja za treniranje agenta. Suštinski deo tog koda je izložen u sledećem isečku:
+\begin{minted}{python}
+env = gym.make("CartPole-v1") # Na primer inicijalizuje se okruženje cartpole
+dqn_agent = DQNAgent(env.observation_space.shape, env.action_space.n)
+buffer = ReplayBuffer(env.observation_space.shape, learning_starts, max_buffer_len)
+
+train_step_cnt = 0
+while train_step_cnt < total_train_steps:
+    current_state = env.reset()
+    
+    done = False
+    while not done:
+        action = int(dqn_agent.select_action(current_state))
+        next_state, reward, done, _ = env.step(action)
+        buffer.add(current_state, action, reward, next_state, done)
+        current_state = next_state
+        
+        # Agent se trenira na nasumičnom uzorku iz bafera
+        if buffer.can_sample():
+            sample = buffer.sample_batch(batch_size)
+            loss = dqn_agent.update_batch(sample)
+            train_step_cnt += 1
+\end{minted}
+\section{Eksperimenti}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{../graph-visuals/swingup-plot/plot.pdf}
+	\caption{Prosek nagrada u zadnjih 10 epizoda tokom treniranja na problemu Cartpole swingup}
+\end{figure}
 
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}

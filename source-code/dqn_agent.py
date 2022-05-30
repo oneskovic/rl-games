@@ -30,11 +30,11 @@ class DQNAgent:
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr = self.learning_rate)
         self.target_model = torch.nn.Sequential(*architecture).to(TORCH_DEVICE)
         self.target_model.load_state_dict(self.model.state_dict())
-        self.loss_fn = torch.nn.MSELoss()
+        self.loss_fn = torch.nn.SmoothL1Loss()
 
     def select_action(self, state, greedy=False):
         state = torch.from_numpy(state).float().unsqueeze(0).to(TORCH_DEVICE)
-        state /= 255.0
+        #state /= 255.0
         
         # Select action greedily (used when evaluating)
         if greedy: 
@@ -50,8 +50,8 @@ class DQNAgent:
 
     def update_batch(self, batch_samples):
         batch_states, selected_actions, batch_rewards, batch_next_states, batch_done = batch_samples
-        batch_states /= 255.0
-        batch_next_states /= 255.0
+        #batch_states /= 255.0
+        #batch_next_states /= 255.0
         selected_actions = selected_actions.reshape(-1, 1)
 
         # Predict Q values using current model

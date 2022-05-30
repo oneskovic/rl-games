@@ -6,10 +6,10 @@ class ReplayBuffer:
         self.mem_count = 0
         self.warmup_cnt = warmup_cnt
         self.mem_size = max_buffer_length
-        self.states = torch.zeros((self.mem_size,) + obs_shape,dtype=torch.uint8).to(TORCH_DEVICE)
+        self.states = torch.zeros((self.mem_size,) + obs_shape,dtype=torch.float32).to(TORCH_DEVICE)
         self.actions = torch.zeros(self.mem_size, dtype=int).to(TORCH_DEVICE)
         self.rewards = torch.zeros(self.mem_size, dtype=torch.float32).to(TORCH_DEVICE)
-        self.states_ = torch.zeros((self.mem_size,) + obs_shape,dtype=torch.uint8).to(TORCH_DEVICE)
+        self.states_ = torch.zeros((self.mem_size,) + obs_shape,dtype=torch.float32).to(TORCH_DEVICE)
         self.dones = torch.zeros(self.mem_size, dtype=bool).to(TORCH_DEVICE)
     
     def add(self, state, action, reward, state_, done):

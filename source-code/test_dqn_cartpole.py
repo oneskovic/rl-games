@@ -1,17 +1,17 @@
-from dqn_agent import DQNAgent
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
-from replay_buffer import ReplayBuffer
 import gym
 import pickle
-from ray.rllib.env.wrappers.atari_wrappers import wrap_deepmind
-import gym
-
-from config import TORCH_DEVICE
+import tqdm
+from dqn_agent import DQNAgent
+from replay_buffer import ReplayBuffer
 
 def transform_state(state):
-    return np.moveaxis(state, -1, 0)
+    return state
+
+def update_batch_size(step):
+    return int(32 + 0.003 * step)
 
 def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     total_reward = 0
@@ -31,39 +31,25 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     print(f'Average reward: {total_reward/episode_cnt}')
     return total_reward / episode_cnt
 
-env = wrap_deepmind(gym.make("ALE/Pong-v5"))
-
-dqn_architecture = [
-    torch.nn.Conv2d(in_channels=4, out_channels=32, kernel_size=8, stride=4),
-    torch.nn.ReLU(),
-    torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2),
-    torch.nn.ReLU(),
-    torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
-    torch.nn.ReLU(),
-    torch.nn.Flatten(1,3),
-    torch.nn.Linear(3136, 256),
-    torch.nn.ReLU(),
-    torch.nn.Linear(256, env.action_space.n)
-]
-dqn_agent = DQNAgent(env.observation_space.shape,env.action_space.n,architecture=dqn_architecture, lr=0.00025,eps_min=0.1)
-
-episode_cnt = 2000
 total_train_steps = 100000
-eval_freq = 100
-max_buffer_len = 100000
+max_buffer_len = 10000
 swap_interval = 3000
 batch_size = 32
-learning_starts = 10000
+learning_starts = 500
 max_t = 10000
-eval_episodes = 10
+eval_freq = 10000
 model_save_freq = 100
 reward_history = []
 training_reward_history = []
 
-buffer = ReplayBuffer((4,84,84), learning_starts, max_buffer_len)
+env = gym.make("CartPole-v1")
+dqn_agent = DQNAgent(env.observation_space.shape, env.action_space.n, lr=0.00025,eps_min=0.1,eps_decay=0.9999)
+buffer = ReplayBuffer(env.observation_space.shape, learning_starts, max_buffer_len)
 
 learning_started = False
-for episode in range(1,episode_cnt+1):
+train_step_cnt = 0
+pbar = tqdm.tqdm(total=total_train_steps)
+while train_step_cnt < total_train_steps:
     current_state = env.reset()
     current_state = transform_state(current_state)
     
@@ -84,17 +70,20 @@ for episode in range(1,episode_cnt+1):
         if buffer.can_sample():
             sample = buffer.sample_batch(batch_size)
             loss = dqn_agent.update_batch(sample)
+            pbar.update(1)
+            train_step_cnt += 1
+            batch_size = update_batch_size(train_step_cnt)
+            if train_step_cnt % eval_freq == 0:
+                pass
+                #eval_agent(env, dqn_agent, 3, max_t, render=True)
 
     training_reward_history.append(episode_reward)
     avg_reward = np.mean(training_reward_history[-30:])
-    print(f'Episode {episode} Average reward: {avg_reward:.2f} Epsilon: {dqn_agent.eps:.3f}')
-    if episode % eval_freq == 0:
-            reward_history.append(eval_agent(env, dqn_agent, eval_episodes, max_t))
-    if episode % model_save_freq == 0:
-        pickle.dump(dqn_agent.model.cpu(), open(f'models/{episode}_model.pkl','wb+'))
-        dqn_agent.model.to(TORCH_DEVICE)
-        
+    pbar.set_description(f'Average reward: {avg_reward:.2f} Epsilon: {dqn_agent.eps:.3f} Batch size: {batch_size}')
 
-eval_agent(env, dqn_agent, 5, 1000, render=True)
+        
+    
+#eval_agent(env, dqn_agent, 5, 1000, render=True)
+pickle.dump(training_reward_history, open('training_reward_history.pkl', 'wb+'))
 plt.plot(training_reward_history)
 plt.show()

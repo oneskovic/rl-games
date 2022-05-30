@@ -1,0 +1,35 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{update\PYGZus{}batch}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{batch\PYGZus{}samples}\PYG{p}{):}
+	\PYG{n}{batch\PYGZus{}states}\PYG{p}{,} \PYG{n}{selected\PYGZus{}actions}\PYG{p}{,} \PYG{n}{batch\PYGZus{}rewards}\PYG{p}{,} \PYG{n}{batch\PYGZus{}next\PYGZus{}states}\PYG{p}{,} \PYG{n}{batch\PYGZus{}done} \PYG{o}{=} \PYG{n}{batch\PYGZus{}samples}
+	\PYG{n}{selected\PYGZus{}actions} \PYG{o}{=} \PYG{n}{selected\PYGZus{}actions}\PYG{o}{.}\PYG{n}{reshape}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
+
+	\PYG{c+c1}{\PYGZsh{} Predviđaju se Q vrednosti pomoću trenutnog modela}
+	\PYG{n}{pred\PYGZus{}q} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{model}\PYG{p}{(}\PYG{n}{batch\PYGZus{}states}\PYG{p}{)}
+	\PYG{c+c1}{\PYGZsh{} Izdvajaju se samo vrednosti za akcije koje su zapravo izvršene}
+	\PYG{n}{pred\PYGZus{}q} \PYG{o}{=} \PYG{n}{pred\PYGZus{}q}\PYG{o}{.}\PYG{n}{gather}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{selected\PYGZus{}actions}\PYG{p}{)}\PYG{o}{.}\PYG{n}{flatten}\PYG{p}{()}
+
+	\PYG{c+c1}{\PYGZsh{} Predviđaju se Q vrednosti pomoću ciljnog modela}
+	\PYG{n}{true\PYGZus{}q} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{gamma} \PYG{o}{*} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{target\PYGZus{}model}\PYG{p}{(}\PYG{n}{batch\PYGZus{}next\PYGZus{}states}\PYG{p}{)}\PYG{o}{.}\PYG{n}{max}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{o}{*} \PYG{p}{(}\PYG{o}{\PYGZti{}}\PYG{n}{batch\PYGZus{}done}\PYG{p}{)} \PYG{o}{+} \PYG{n}{batch\PYGZus{}rewards}
+
+	\PYG{c+c1}{\PYGZsh{} Računa se loss funkcija i poziva se backward}
+	\PYG{n}{loss} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{loss\PYGZus{}fn}\PYG{p}{(}\PYG{n}{pred\PYGZus{}q}\PYG{p}{,} \PYG{n}{true\PYGZus{}q}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{optimizer}\PYG{o}{.}\PYG{n}{zero\PYGZus{}grad}\PYG{p}{()}
+	\PYG{n}{loss}\PYG{o}{.}\PYG{n}{backward}\PYG{p}{()}
+
+	\PYG{c+c1}{\PYGZsh{} Vrednosti gradijenta se ograničavaju}
+	\PYG{k}{for} \PYG{n}{param} \PYG{o+ow}{in} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{model}\PYG{o}{.}\PYG{n}{parameters}\PYG{p}{():}
+		\PYG{n}{param}\PYG{o}{.}\PYG{n}{grad}\PYG{o}{.}\PYG{n}{data}\PYG{o}{.}\PYG{n}{clamp\PYGZus{}}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{optimizer}\PYG{o}{.}\PYG{n}{step}\PYG{p}{()}
+
+	\PYG{c+c1}{\PYGZsh{} Smanjuje se trenutno epsilon}
+	\PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{eps} \PYG{o}{\PYGZgt{}} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{eps\PYGZus{}min}\PYG{p}{:}
+		\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{eps} \PYG{o}{*=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{eps\PYGZus{}decay}
+
+	\PYG{c+c1}{\PYGZsh{} Ako je potrebno poziva se metoda za kopiranje težina u ciljnu mrežu}
+	\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{target\PYGZus{}update\PYGZus{}remaing} \PYG{o}{\PYGZhy{}=} \PYG{l+m+mi}{1}
+	\PYG{k}{if} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{target\PYGZus{}update\PYGZus{}remaing} \PYG{o}{\PYGZlt{}=} \PYG{l+m+mi}{0}\PYG{p}{:}
+		\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{update\PYGZus{}target\PYGZus{}model}\PYG{p}{()}
+		\PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{target\PYGZus{}update\PYGZus{}remaing} \PYG{o}{=} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{target\PYGZus{}update\PYGZus{}interval}
+
+	\PYG{k}{return} \PYG{n}{loss}\PYG{o}{.}\PYG{n}{item}\PYG{p}{()}
+\end{Verbatim}

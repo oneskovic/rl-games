@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{def} \PYG{n+nf}{select\PYGZus{}action}\PYG{p}{(}\PYG{n+nb+bp}{self}\PYG{p}{,} \PYG{n}{state}\PYG{p}{,} \PYG{n}{greedy}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{):}
+        \PYG{n}{state} \PYG{o}{=} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{from\PYGZus{}numpy}\PYG{p}{(}\PYG{n}{state}\PYG{p}{)}\PYG{o}{.}\PYG{n}{float}\PYG{p}{()}\PYG{o}{.}\PYG{n}{unsqueeze}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{)}\PYG{o}{.}\PYG{n}{to}\PYG{p}{(}\PYG{n}{TORCH\PYGZus{}DEVICE}\PYG{p}{)}
+
+        \PYG{c+c1}{\PYGZsh{} Akcija se bira pohlepno (koristi se pri evaluaciji)}
+        \PYG{k}{if} \PYG{n}{greedy}\PYG{p}{:}
+            \PYG{k}{with} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{no\PYGZus{}grad}\PYG{p}{():}
+                \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{model}\PYG{p}{(}\PYG{n}{state}\PYG{p}{)}\PYG{o}{.}\PYG{n}{argmax}\PYG{p}{()}
+        \PYG{c+c1}{\PYGZsh{} Akcija se bira po epsilon\PYGZhy{}greedy strategiji}
+		\PYG{c+c1}{\PYGZsh{} (sa verovatnoćom epsilon se bira nasumična akcija)}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{k}{if} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{rand}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{)} \PYG{o}{\PYGZgt{}} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{eps}\PYG{p}{:}
+                \PYG{k}{with} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{no\PYGZus{}grad}\PYG{p}{():}
+                    \PYG{k}{return} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{model}\PYG{p}{(}\PYG{n}{state}\PYG{p}{)}\PYG{o}{.}\PYG{n}{argmax}\PYG{p}{()}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{k}{return} \PYG{n}{torch}\PYG{o}{.}\PYG{n}{randint}\PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{n+nb+bp}{self}\PYG{o}{.}\PYG{n}{n\PYGZus{}actions}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{))}
+\end{Verbatim}
