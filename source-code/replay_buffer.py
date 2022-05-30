@@ -17,7 +17,7 @@ class ReplayBuffer:
         
         self.states[mem_index]  = torch.tensor(state, dtype=torch.float32)
         self.actions[mem_index] = action
-        self.rewards[mem_index] = reward
+        self.rewards[mem_index] = max(-1,min(reward,1))
         self.states_[mem_index] = torch.tensor(state_, dtype=torch.float32)
         self.dones[mem_index] =  done
 

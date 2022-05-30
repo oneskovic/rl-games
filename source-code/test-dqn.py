@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 from replay_buffer import ReplayBuffer
 import gym
 import pickle
-from ray.rllib.env.wrappers.atari_wrappers import wrap_deepmind
-import gym
 
 from config import TORCH_DEVICE
 

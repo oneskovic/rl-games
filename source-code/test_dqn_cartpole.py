@@ -31,19 +31,19 @@ def eval_agent(env, agent : DQNAgent, episode_cnt, max_step_cnt, render=False):
     print(f'Average reward: {total_reward/episode_cnt}')
     return total_reward / episode_cnt
 
-total_train_steps = 100000
-max_buffer_len = 10000
-swap_interval = 3000
+total_train_steps = 1000000
+max_buffer_len = 100000
+swap_interval = 10000
 batch_size = 32
-learning_starts = 500
+learning_starts = 5000
 max_t = 10000
-eval_freq = 10000
+eval_freq = 100000
 model_save_freq = 100
 reward_history = []
 training_reward_history = []
 
-env = gym.make("CartPole-v1")
-dqn_agent = DQNAgent(env.observation_space.shape, env.action_space.n, lr=0.00025,eps_min=0.1,eps_decay=0.9999)
+env = gym.make("Acrobot-v1")
+dqn_agent = DQNAgent(env.observation_space.shape, env.action_space.n, lr=0.00025,eps_min=0.1,eps_decay=0.99999)
 buffer = ReplayBuffer(env.observation_space.shape, learning_starts, max_buffer_len)
 
 learning_started = False
@@ -74,8 +74,7 @@ while train_step_cnt < total_train_steps:
             train_step_cnt += 1
             batch_size = update_batch_size(train_step_cnt)
             if train_step_cnt % eval_freq == 0:
-                pass
-                #eval_agent(env, dqn_agent, 3, max_t, render=True)
+                eval_agent(env, dqn_agent, 1, max_t, render=True)
 
     training_reward_history.append(episode_reward)
     avg_reward = np.mean(training_reward_history[-30:])
@@ -83,7 +82,7 @@ while train_step_cnt < total_train_steps:
 
         
     
-#eval_agent(env, dqn_agent, 5, 1000, render=True)
+eval_agent(env, dqn_agent, 3, 1000, render=True)
 pickle.dump(training_reward_history, open('training_reward_history.pkl', 'wb+'))
 plt.plot(training_reward_history)
 plt.show()

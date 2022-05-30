@@ -6,7 +6,7 @@
 
 
 \usepackage[OT2,T1]{fontenc}
-\usepackage[english,serbian]{babel}
+\usepackage[serbian,english]{babel}
 
 \newcommand{\cyr}{\fontencoding{OT2}\selectfont\selectlanguage{serbian}}
 \newcommand{\latin}{\fontencoding{T1}\selectfont\selectlanguage{english}}
@@ -99,7 +99,9 @@ sorting=ynt
 
 \renewcommand*{\proofname}{Dokaz}
 %\renewcommand*{\refname}{Literatura}
-%\renewcommand{\figurename}{Slika.$ $ }
+\addto\captionsenglish{\renewcommand{\figurename}{Slika}}
+\addto\captionsenglish{\renewcommand{\tablename}{Tabela}}
+
 \theoremstyle{definition}
 
 % Donji i gornji navosnici
@@ -161,7 +163,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 \thispagestyle{plain}
 \section[Osnove]{Osnove}
 Još od davnina ljudi su se nadmetali u igranju igara poput šaha, 
-kineske igre {\latin Go}, {\latin Backgammon} itd. 
+kineske igre Go, Backgammon itd. 
 U mnogim kulturama oni koji su bili najbolji u ovim igrama 
 bili su izuzetno poštovani, pa bi neki ljudi posvećivali čak i 
 čitav svoj život usavršavanju svoje strategije u nekoj od ovih 
@@ -171,33 +173,33 @@ sposobnog da pobedi najboljeg šahistu ili drugog profesionalnog
 igrača gotovo nemoguće. \\
 Ovaj izazov mučio je matematičare stotinama godina i ostao je 
 neprevaziđen sve do 1997. godine kada je konačno računar 
-{\latin (Deep blue)} prvi put pobedio najboljeg šahistu tog 
-vremena Garija Kasparova {\latin (\cite{campbell2002deep})}. 
-{\latin Deep blue} je koristio alfa-beta algoritam pretrage, 
+(Deep blue) prvi put pobedio najboljeg šahistu tog 
+vremena Garija Kasparova (\cite{campbell2002deep}). 
+Deep blue je koristio alfa-beta algoritam pretrage, 
 heuristike, ekspertsko znanje i specijalni hardver napravljen 
 kako bi probao što veći broj poteza po sekundi. 
 Postojao je veći broj šahovskih mašina koje su prethodile 
-{\latin Deep blue} mašini. Kako bi se razvio {\latin Deep blue} 
+Deep blue mašini. Kako bi se razvio  Deep blue
 bilo je potrebno puno šahista, programera, vremena i novca. 
-Dakle, jasno je da iako su velik uspeh, {\latin Deep blue} 
+Dakle, jasno je da iako su velik uspeh,  Deep blue 
 i njemu slične mašine nisu veoma generalne ili uopšte primenljive 
 van vrlo specijalizovanog domena za koji su napravljene.\\
 Velika prekretnica došla je sa razvojem neuronskih mreža, 
 učenja sa podsticajem i hardvera. Sve ovo omogućilo je da se 
 razviju generalni algoritmi koji bez velike modifikacije mogu 
-naučiti da veoma dobro igraju veliki broj igara {\latin (\cite{mnih2015human})}. 
+naučiti da veoma dobro igraju veliki broj igara (\cite{mnih2015human}). 
 Sledeći veliki korak u mašinskom igranju igara došao je sa 
-programom {\latin Alpha Go} koji je 2016. godine pobedio 
-svetskog šampiona Li Sedola u igri Go. {\latin Alpha Go} je 
+programom Alpha Go koji je 2016. godine pobedio 
+svetskog šampiona Li Sedola u igri Go. Alpha Go je 
 koristio učenje sa podsticajem, konvolucione neuronske mreže, 
 Monte Karlo pretragu, takođe delimično je bio treniran na igrama 
-koje su igrali profesionalni Go igrači {\latin (\cite{silver2017mastering})}. 
-Godinu dana kasnije - 2017. godine objavljena je verzija {\latin Alpha Go-a} 
-koja ne koristi ikakvo ekspertsko znanje - {\latin Alpha Go Zero}, 
+koje su igrali profesionalni Go igrači (\cite{silver2017mastering}). 
+Godinu dana kasnije - 2017. godine objavljena je verzija Alpha Go-a 
+koja ne koristi ikakvo ekspertsko znanje - Alpha Go Zero, 
 koja postiže čak bolji rezultat od verzije trenirane sa ekspertskim 
-igrama. Poslednji veliki napredak je program {\latin AlphaStar} 
-koji igra stratešku video igru {\latin StarCraft II} gde pobeđuje 
-najbolje igrače ove igre {\latin (\cite{vinyals2019grandmaster})}.\\
+igrama. Poslednji veliki napredak je program AlphaStar
+koji igra stratešku video igru StarCraft II gde pobeđuje 
+najbolje igrače ove igre (\cite{vinyals2019grandmaster}).\\
 Glavna razlika između metoda korišćenih za rešavanje šaha 
 (alfa-beta pretraga) i savremenih metoda je način kako se 
 igra modeluje. U savremenim metodama učenja sa podsticajem 
@@ -209,8 +211,6 @@ mrežama.
 
 \section[Motivacija]{Motivacija}
 Igre ili opštije, problemi koji se mogu predstaviti kao Markovljevi procesi odlučivanja su od velikog teoretskog značaja za mašinsko učenje. Pored toga što donekle pružaju uvid u mogućnosti računara i razlike između ljudske i veštačke inteligencije, veliki broj procesa u stvarnosti poput problema optimalne kontrole (upravljanje robotima i mašinama), regulisanje sistema za hlađenje, kompresije videa itd. mogu se modelovati kao Markovljevi procesi odlučivanja. Složene igre pružaju dobar način da se granice savremenih metoda preciznije odrede, što primenu onda čini znatno lakšom. 
-\section [Cilj Rada]{Cilj rada}
-Cilj ovog rada je da se izlože metode učenja sa podsticajem, od najjednostavnijih do složenijih. Uz ovo prikazani su problemi koji su rešivi svakom od metoda i problemi koji prevazilaze mogućnosti date metode, pa motivišu upotrebu neke složenije metode.
 
 \chapter[Metode]{Metode}
 \section[Uvod]{Uvod}
@@ -225,7 +225,7 @@ Markovljevi procesi odlučivanja su uopštenje Markovljevih lanaca sa dodatim ak
 \end{itemize}
 Rešenje Markovljevog procesa odlučivanja je optimalna funkcija $\piopt$:
 \[
-	\text{\latin argmax}_{\piopt}\EX \left[ \zbtg \gamma^t R_{\piopt(s_t)}(s_t,s_{t+1}) \right]
+	\text{argmax}_{\piopt}\EX \left[ \zbtg \gamma^t R_{\piopt(s_t)}(s_t,s_{t+1}) \right]
 \]
 Posmatrajmo jednostavan Markovljev proces odlučivanja sa tri stanja ${S_0, S_1, S_2}$ i dve moguće akcije ${A_0, A_1}$ (slika 1).
 \begin{figure}[!ht]
@@ -249,8 +249,8 @@ Dodatno, lako je videti da je tako dobijen proces (slika 2) ekvivalentan sledeć
 \end{figure}
 Kada je dat ovakav lanac, kao sa slike 3, postavlja se pitanje: kako efikasno odrediti očekivanu nagradu u tom lancu, ako je dato početno stanje ili verovatnoća za svako stanje da bude početno. Ako je ovo moguće uraditi, onda je odmah dat efikasan način da se evaluira očekivana nagrada koja će biti ostvarena ako se koristi neka fiksna politika.\\
 
-\section{Evaluacija politike ({\latin policy evaluation})}
-Kada je politika fiksirana, traženje očekivane nagrade koja će biti ostvarena ako se prati data politika je ekvivalentna nalaženju očekivane nagrade u nekom Markovljevom lancu. Prvo, uvedimo sledeću notaciju:
+\section{Evaluacija politike (policy evaluation)}
+Kada je politika fiksirana, traženje očekivane nagrade koja će biti ostvarena ako se prati data politika je ekvivalentno nalaženju očekivane nagrade u nekom Markovljevom lancu. Prvo, uvedimo sledeću notaciju:
 \begin{itemize}
 	\item $S_t$ - Skup svih sekvenci dužine $t$. Na primer ako se iz stanja $N_0$ poseti stanje $N_1$, pa stanje $N_2$ itd. pa se na kraju poseti stanje $N_t$ sekvenca bi bila $(N_0, N_1, N_2, \cdots , N_t)$
  	\item $S_{t,u}$ - Skup svih sekvenci stanja dužine $t$ koje se završavaju sa stanjem $u$.
@@ -356,15 +356,15 @@ Kada $t \to \infty$ onda je $A^{t-1} = 0$. Pa je $S = I(I-A)^{-1} = (I-A)^{-1}$.
 Korisno je napomenuti da postoji još jedan značajan način da se pronađe očekivana nagrada koju neka politika ostvaruje, a to je
 pomoću takozvanog \textit{Belmanovog operatora očekivanja}. Može se definisati očekivana vrednost za politiku $\pi$ iz stanja $s$ kao
 $V^{\pi}(s)$. Funkcija $V$ se naziva funkcija vrednosti stanja. Funkcije stanja mogu se posmatrati kao vektori u Banahovom prostoru
-$\mathbb{R}^{|S|}$ gde je $S$ skup svih mogućih stanja. Na ovom prostoru se definiše i norma, na primer maksimum norma $|v|_{\infty}$.\\
+$\mathbb{R}^{|S|}$ gde je $S$ skup svih mogućih stanja. Na ovom prostoru se definiše i norma, na primer maksimum norma $||v||_{\infty}$.\\
 Može se uvesti Belmanov operator očekivanja za stacionarnu determinističku politiku $\pi$:
 \[
 	B^{\pi}(V)_s = \sum_{s'}T(S,\pi(S),S')(R(S,\pi(S),S')+\gamma V(S'))
 \]
-ili slično i za nedeterminističke politike. Može se pokazati ({\latin \cite{puterman2014markov}}) da je Belmanov operator očekivanja kontrakcija na datom prostoru.
-Pa postoji stacionarna tačka $B^{\pi}(x) = x$. Dokazuje se ({\latin \cite{puterman2014markov}}) da je tačka $x$ upravo $V^{\pi}$.
-Sličan dokaz će biti izložen za algoritam optimizacije vrednosti.
-\section{Optimizacija vrednosti (\latin value iteration)}
+ili slično i za nedeterminističke politike. Može se pokazati (\cite{puterman2014markov}) da je Belmanov operator očekivanja kontrakcija na datom prostoru.
+Pa postoji stacionarna tačka $B^{\pi}(x) = x$. Dokazuje se (\cite{puterman2014markov}) da je tačka $x$ upravo $V^{\pi}$.
+Sličan dokaz će detaljnije biti izložen za algoritam optimizacije vrednosti.
+\section{Optimizacija vrednosti (value iteration)}
 Uvedimo notaciju za očekivanu vrednost koja se može ostvariti iz stanja (funkciju vrednosti stanja) $s$ ako se prati neka stacionarna, deterministička politika $\pi$:
 \[
 	V^{\pi}(s) = \sum_{s'}T(s,\pi(s),s')R(s,\pi(s),s') + \gamma V^{\pi}(s')
@@ -384,10 +384,10 @@ Algoritam optimizacije funkcije vrednosti stanja uključuje iterativnu primenu B
 početnu funkciju vrednosti stanja (tj. na početni vektor). Kako bi pokazali da algoritam konvergira i da konvergira upravo 
 na vrednost $V^{*}$ biće dokazano da je operator $B^{*}$ kontrakcija na datom Banahovom prostoru.\\ 
 Prema Banahovoj teoremi fiksne tačke ukoliko je $B^{*}$ kontrakcija na prostoru $R^{|S|}$ 
-onda postoji vektor $x^*$ takav da važi $B^{*}(x^{*}) = x^{*}$ i dodatno za sve ostale vektore u tom prostoru 
-važi da ukoliko se definiše red $x_n = B^{*}(x_{n-1})$ onda je $\lim_{n \to \infty} x_n = x^*$. Na kraju potrebno je
+onda postoji vektor $x^*$ takav da važi $B^{*}(x^{*}) = x^{*}$ i dodatno za sve ostale vektore $x$ u tom prostoru 
+važi da ukoliko se definiše red $x_n = B^{*}(x_{n-1}), x_0 = x$ onda je $\lim_{n \to \infty} x_n = x^*$. Na kraju potrebno je
 još pokazati da je $x^{*} = V^{*}$, odnosno da algoritam konvergira na optimalnu vrednost.
-\teo{$(\forall U \in R^{|S|}, \forall V \in R^{|S|}, U \neq V ) ||B^*(V) - B^*(U)||_{\infty} \leq k ||V - U||_{\infty}$ gde $k \in [0,1)$}\\
+\teo{$B^{*}$ je kontrakcija, tj: $(\forall U \in R^{|S|}, \forall V \in R^{|S|}, U \neq V ) ||B^*(V) - B^*(U)||_{\infty} \leq k ||V - U||_{\infty}$ gde $k \in [0,1)$}\\
 Po definiciji je:
 \[ B^*(V)_s = \text{max}_{a}\sum_{s'}T(s,a,s')(R(s,a,s')+\gamma V_{s'}) \]
 Pošto je skup akcija konačan, postoji akcija $a_1$ koja maksimizuje datu sumu, pa se može zapisati:
@@ -405,9 +405,9 @@ Pa za razliku $B^*(V)_s - B^*(U)_s$ važi nejednakost:
 	\end{split}
 \]
 Pošto je $|x| \geq x$, važi:
-\[ B^*(V)_s - B^*(U)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| (a)\]
+\[B^*(V)_s - B^*(U)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| \; (a)\]
 Primetimo da ukoliko razmenimo vrednosti $U$ i $V$ dobija se sledeća nejednakost:
-\[ B^*(U)_s - B^*(V)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| (b)\]
+\[ B^*(U)_s - B^*(V)_s \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| \; (b)\]
 Iz $a$, $b$ sledi:
 \[ |B^*(V)_s - B^*(U)_s| \leq \gamma \sum_{s'}T(s,a_1,s')|V_{s'} - U_{s'}| \] 
 Ukoliko se $|V_{s'} - U_{s'}|$ zameni sa $\text{max}_{s''}|V_{s''} - U_{s''}|$ desna strana nejednakosti se može
@@ -466,7 +466,7 @@ Pa je nejednakost ekvivalentna:
 Što je kontradikcija, čime je dokazana početna lema.
 \medskip \\
 Ovim je pokazano da je moguće pronaći optimalnu funkciju vrednosti stanja počevši od bilo koje funkcije vrednosti stanja i iterativnom
-primenom Belmanovog optimizacionog operatora. Još preostaje da se dokaže da postoji stacionarna, deterministička politika koja
+primenom Belmanovog optimizacionog operatora na tu funkciju. Još preostaje da se dokaže da postoji stacionarna, deterministička politika koja
 dostiže očekivanu vrednost optimalne funkcije stanja.
 \teo {U proizvoljnom Markovljevom procesu odlučivanja politika:\\
 \[ \piopt(s) = \text{argmax}_a \left( \sum_{s'} T(s,a,s')(R(s,a,s')+\gamma V^*_{s'}) \right) \]
@@ -536,10 +536,11 @@ Pa se početno tvrđenje svodi na:
 \medskip \\
 Algoritam određivanja funkcije vrednosti stanja pod politikom $\pi$ se može formulisati na sledeći način:
 \[ V_s \leftarrow \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V_{s'}) \]
+Gde je $a = \pi(s)$.\\
 Ako je data epizoda generisana politikom $\pi$: $s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$.
 Na osnovu date epizode, motivisani prethodnim lemama možemo formulisati stohastičku verziju prethodnog algoritma:
 \[ V_{s_t} \leftarrow V_{s_t} + \alpha_t (R_t + \gamma V_{s_{t+1}} - V_{s_t}) \]
-Formalnije je dokazano ({\latin \cite{sutton2018reinforcement}}) da i stohastička verzija konvergira na pravu vrednost $V^{\pi}$. 
+Formalnije je dokazano (\cite{sutton2018reinforcement}) da i ova verzija konvergira na pravu vrednost $V^{\pi}$. 
 
 \section{Učenje Q vrednosti}
 Slično kao funkcija vrednosti stanja, može se definisati funkcija očekivane nagrade $Q^{\pi}(s,a)$ koja predstavlja očekivanu
@@ -568,7 +569,7 @@ Pa se jednačina za $Q^*$ može zapisati ekvivalentno na sledeći način:
 Stoga je jasno da ako su date vrednosti optimalne funkcije $V^*$ odmah su date i vrednosti optimalne $Q$ funkcije $Q^*$.
 Što opravdava uvođenje algoritma optimizacije $Q$ vrednosti koji je analogan prethodnom algoritmu učenja optimalne vrednosti stanja $V^*$.
 \[ Q(s,a) \leftarrow \sum_{s'}T(s,a,s')(R(s,a,s')+\gamma \text{max}_{a'}Q(s',a')) \]
-Pa zatim i stohastičku verziju tog algoritma:\\
+Pa zatim i stohastička verzija tog algoritma:\\
 Ako je data epizoda: $E: s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$\\
 Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
 \[ 
@@ -579,7 +580,7 @@ Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
 	\end{cases}
 \]
 
-Kada $n \to \infty$ dokazano je da $Q_n(s,a) \to Q^*(s,a)$ {\latin (\cite{watkins1992q}) (\cite{sutton2018reinforcement})} pod uslovima:
+Kada $n \to \infty$ dokazano je da $Q_n(s,a) \to Q^*(s,a)$ (\cite{watkins1992q}) (\cite{sutton2018reinforcement}) pod uslovima:
 \begin{itemize}
 	\item Kada $n \to \infty$ svako stanje i svaka akcija će se pojaviti u sekvenci $E$ beskonačno puta, odnosno: $(\forall s)(\forall a)p(s_n = s, a_n = a) > 0$.
  	\item $(\forall s)(\forall a)  \sum_i^{\infty}\alpha_{n_i(s,a)} = \infty$, ali $\sum_i^{\infty}\left(\alpha_{ {n_i(s,a)}}\right)^2 = \text{const}$ gde je $n_i(s,a)$ $i$-ta pozicija u sekvenci $E$ kada je akcija $a$ izvršena u stanju $s$.
@@ -601,7 +602,7 @@ $\hat{y}$ slično pravom $y$. $L$ može i ne mora biti metrika, na primer često
 Postoji veliki broj metoda za pronalaženje funkcije koja minimizuje funkciju gubitka poput linearne i logističke regresije, 
 metode potpornih vektora, stabla odlučivanja, metode k najbližih komšija, neuronskih mreža itd.\\
 Neuronske mreže ili specifičnije potpuno povezane neuronske mreže (multilayer perceptron) su univerzalni aproksimatori funkcija.
-Dokazano je (\latin \cite{hanin2017approximating}) da neuronske mreže sa dovoljno velikim brojem slojeva mogu aproksimirati
+Dokazano je (\cite{hanin2017approximating}) da neuronske mreže sa dovoljno velikim brojem slojeva mogu aproksimirati
 bilo koju kontinualnu funkciju na nekom zatvorenom intervalu. Odnosno za svako $\epsilon$ se može odabrati arhitektura neuronske
 mreže tako da se greška aproksimacije spusti ispod $\epsilon$.\\
 Zahvaljujući ovoj generalnosti su neuronske mreže postale glavni izbor za skoro sve probleme nadgledanog učenja.
@@ -632,7 +633,7 @@ numeričkih metoda za aproksimaciju nula. Osnovni algoritam gradijentnog spusta 
 Gde je $\eta$ hiperparametar (\textit{stopa učenja} / learning rate). Algoritam gradijentnog spusta je numerička metoda prvog reda
 koja nalazi lokalni minimum funkcije tako što se spušta niz gradijent (zato je znak $-$ ispred gradijenta). Algoritam gradijentnog spusta
 konvergira na lokalni minimum pod vrlo ograničavajućim uslovima - na primer dovoljni uslovi za pronalaženje lokalnog minimuma
-funkcije $g(x)$ su da je funkcija Lipšic kontinualna i konveksna. U cilju prevazilaženja ovih ograničenja smišljene su mnoge varijante
+funkcije $g(x)$ su da je funkcija konveksna i njen gradijent Lipšic kontinualan. U cilju prevazilaženja ovih ograničenja smišljene su mnoge varijante
 algoritma gradijentnog spusta: AdaGrad, AdaDelta, RMSProp, Nestorov, Adam...\\
 U praksi najuspešniji i najčešće korišćen je Adam (adaptive moment estimation) koji je takođe metoda prvog reda. Adam koristi
 takozvani \textit{prvi i drugi moment} (vrednosti sračunate na osnovu prethodnih gradijenata) kako bi se stabilizovala aproksimacija
@@ -640,8 +641,9 @@ gradijenta ili izbegli neki zaravnjeni delovi.
 \subsection{Konvoluciona neuronska mreža}
 Konvoluciona neuronska mreža je specifičan oblik neuronske mreže koji se najčešće koristi kada je potrebno analizirati podatke
 poput slika ili videa. Slike su najčešće podaci visoke dimenzionalnosti, na primer slika dimenzija $100 \times 100$ (sa još 3 kanala
-za r,g i b) je matrica 30000 brojeva. Ako bi potpuno povezani sloj nakon ulaznog sloja imao samo 100 neurona matrica težina bi bila
-matrica dimenzije $(30000 \times 100)$ odnosno imala bi 3 miliona parametara koje je potrebno naučiti. Ovo značajno usporava i otežava
+za r,g i b) je matrica 30000 brojeva. Ako bi ovu matricu ispravili u vektor veličine 30000, koristili potpuno povezanu mrežu i uzeli da 
+sloj nakon ulaznog sloja ima samo 100 neurona matrica težina bi bila matrica dimenzije $(30000 \times 100)$ 
+odnosno imala bi 3 miliona parametara koje je potrebno naučiti. Ovo značajno usporava i otežava
 treniranje pa je poželjno nekako smanjiti broj parametara koje je potrebno optimizovati. Na sreću slike su podaci koji poseduju
 veliku \textit{prostornu lokalnost} - odnosno moguće je izvući puno informacija iz slike posmatrajući samo neki region slike.
 Na primer može se zaključiti da je mačka na slici ukoliko se na dva manja regiona detektuju oči i u sličnom regionu detektuje
@@ -663,7 +665,7 @@ kros-korelacija filtera i ulazne slike.
 Najčešće ulazna slika ima dubinu veću od 1. Pa se najčešće za jedan filter računa konvolucija sa čitavom dubinom slike.
 Na primer ako je ulazna slika dimenzije $(100 \times 100 \times 3)$ ako se uzme filter $(5 \times 5)$ za konvoluciju bio bi 
 dubine takođe 3. Tj. dimenzija $(5 \times 5 \times 3)$. Takođe konvolucioni sloj ima nekoliko različitih filtera pa se za svaki od
-filtera računaju konvolucije, time se dobija dubina u izlazu tog sloja (na primer na slici iznad ima 5 filtera pa je izlaz dubine 5).
+filtera računaju konvolucije, time se dobija dubina u izlazu tog sloja (na primer na slici iznad postoji 5 filtera pa je izlaz dubine 5).
 Konvolucioni sloj takođe određuje veličina koraka (tj. \textit{stride}). Stride predstavlja za koliko se filter pomeri prilikom računanja
 proizvoda sa ulaznom slikom. 
 \begin{figure}[!ht]
@@ -700,7 +702,7 @@ prilično ograničena. Na primer verovatno je dovoljno znati da se na ekranu nal
 se igralo optimalno. Nada je da ukoliko se koristi model sposoban da dovoljno apstrahuje stanja da će takav model moći da
 prepozna slična stanja i izgradi optimalnu politiku nad samo neophodnim informacijama. Međutim, aproksimacija $Q$ funkcije pomoću
 nelinearnog modela je težak problem koji je tek skorije u nekoj meri rešen. Poznate su situacije gde nelinearni aproksimatori
-$Q$ funkcije ne konvergiraju na optimalnu $Q$ vrednost, šta više divergiraju u potpunosti (\latin \cite{NEURIPS2018_5fd0245f}). 
+$Q$ funkcije ne konvergiraju na optimalnu $Q$ vrednost, šta više divergiraju u potpunosti (\cite{NEURIPS2018_5fd0245f}). 
 Međutim ukoliko se $Q$ funkcija aproksimira neuronskom mrežom i treniranje se vrši na specifičan način u praksi je često moguće dobiti
 veoma dobre rezultate.\\
 Kako bi se aproksimirala $Q$ funkcija posmatrajmo jednačinu za stohastičku verziju nalaženja optimalne $Q$ vrednosti:\\
@@ -730,23 +732,23 @@ Učenje teče isto kao i za normalne neuronske mreže tako što se za svaki uzor
 \medskip\\
 Ovako formulisano učenje međutim nije preterano uspešno. Ako se učenje posmatra kao regresija i vrednost $r_n + \gamma \text{max}_{a'}Q(s'_n,a',\theta_{n})$ 
 kao vrednost koju treba predvideti vidi se da se premenljiva koju treba predvideti veoma često menja što destabilizuje učenje, takođe
-pokazano je da ovakav način učenja često precenjuje vrednost nagrade (\latin \cite{van2016deep}) pa
+pokazano je da ovakav način učenja često precenjuje vrednost nagrade (\cite{van2016deep}) pa
 se u praksi fiksiraju dva seta paramatara $\theta$ i $\theta'$. Funkcija gubitka se definiše kao:
 \[L_n(\theta_n) = (r_n + \gamma \text{max}_{a'}Q(s'_n,a',\theta_n') - Q(s_n,a_n,\theta_n))^2 \]
 Na neki fiksan broj koraka se parametri mreže $\theta'$ postavljaju na vrednost parametara $\theta$.
 Takođe moguće je i formulisati funkciju gubitka na sledeći način kako bi se izbeglo precenjivanje nagrade:
 \[L_n(\theta_n) = (r_n + \gamma Q(s',\text{argmax}_{a'}Q(s'_n,a',\theta_n),\theta_n') - Q(s_n,a_n,\theta_n))^2 \]
-Ovo se naziva \textit{Double DQN} (\latin \cite{van2016deep}).
+Ovo se naziva \textit{Double DQN} (\cite{van2016deep}).
 Pored ovih tehnika, primećeno je da kada se neuronske mreže koriste za aproksimaciju $Q$ funkcije, često dolazi do divergencije ili
-lošeg učenja zbog velike korelacije među $Q$ vrednostima ako četvorke $(s,a,s',r)$ predstavljaju uzastopne četvorke neke epizode.
-Kako bi se izbegla korelacija četvorke iskustva $(s,a,s',r)$ koje mreža generiše prilikom interakcije sa okruženjem dodaju se 
-u velik niz iskustava odakle se prilikom treniranja biraju nasumične četvorke $(s,a,s',r)$ na kojima se mreža trenira. Ovo se naziva
-\textit{experience replay} (\latin \cite{mnih2015human}).
+lošeg učenja zbog velike korelacije među $Q$ vrednostima ako četvorke $(s,a,r,s')$ predstavljaju uzastopne četvorke neke epizode.
+Kako bi se izbegla korelacija četvorke iskustva $(s,a,r,s')$ koje mreža generiše prilikom interakcije sa okruženjem dodaju se 
+u velik niz iskustava odakle se prilikom treniranja biraju nasumične četvorke $(s,a,r,s')$ na kojima se mreža trenira. Ovo se naziva
+\textit{experience replay} (\cite{mnih2015human}).
 \chapter{Implementacija i rezultati ekperimenata}
 U okviru rada implementiran je algoritam Deep Q-learning. Algoritam je zatim primenjen za rešavanje problema optimalne kontrole
 \textit{Cartpole swing-up}, a zatim i dve Atari igre: \textit{Pong} i \textit{Video Pinball}. Neuronske mreže implementirane su
-pomoću biblioteke \textit{PyTorch} (\latin \cite{NEURIPS2019_9015}), a okruženja sa kojima agent interaguje su deo standardne
-implementacije \textit{OpenAI gym} (\latin \cite{1606.01540}).
+pomoću biblioteke \textit{PyTorch} (\cite{NEURIPS2019_9015}), a okruženja sa kojima agent interaguje su deo standardne
+implementacije \textit{OpenAI gym} (\cite{1606.01540}).
 \section{Memorija (replay buffer)}
 Replay bafer je implementiran u klasi \texttt{ReplayBuffer}. Cilj replay bafera je čuvanje četvorki iskustva $(s,a,r,s')$.
 U kodu vrednosti $s$, $a$, $r$ i $s'$ se čuvaju u odvojenim torch tensorima, kako bi se lakše ceo bafer prebacio na memoriju grafičke karte.
@@ -881,15 +883,79 @@ while train_step_cnt < total_train_steps:
             train_step_cnt += 1
 \end{minted}
 \section{Eksperimenti}
+\subsection{Cartpole swingup}
+U problemu cartpole swingup agent upravlja kolicima za koje je zglobno fiksirana šipka. Kolica se mogu pomerati levo i desno, a
+šipka počinje malo pomerena od ravnotežnog položaja. Cilj agenta je da održi šipku uspravnom (između $\pm 12 ^{\circ}$).\\
+\begin{center}
+	\begin{table}[!ht]
+		\begin{tabular}{|l|l|l|l|}
+		\hline
+		 & \textbf{Vredost} & \textbf{Minimum}  & \textbf{Maksimum}\\ \hline
+		1 & Pozicija kolica & $-4.8$ & $4.8$\\ \hline
+		2 & Brzina kolica & $-\infty$ & $\infty$\\ \hline
+		3 & Ugao šipke & $~ -0.418 \text{ rad}$ & $~ 0.418 \text{ rad}$\\ \hline
+		4 & Ugaona brzina šipke & $-\infty$ & $\infty$\\ \hline
+		\end{tabular}
+		\caption{Stanje koje agent dobija od okruženja Cartpole swingup}	
+	\end{table}	
+\end{center}
+Agent dobija $+1$ nagradu za svaki korak koji izvrši dok se epizoda ne završi, epizoda se završava ako ugao šipke nije između 
+$\pm 12^{\circ} $ ili epizoda traje više od $500$ koraka.Korišćena je arhitektura mreže sa dva skrivena sloja od po $64$ neurona.
+Postignuta je maksimalna moguća nagrada $500$.
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[scale=0.4]{../graph-visuals/swingup-plot/plot.pdf}
+	\includegraphics[scale=0.4]{../graph-visuals/swingup/swingup-sample.png}
+	\caption{Primer stanja $s ~ [0.06, 0.17, -0.12, -0.49]$ u okruženju Cartpole swingup}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{../graph-visuals/swingup/plot.pdf}
 	\caption{Prosek nagrada u zadnjih 10 epizoda tokom treniranja na problemu Cartpole swingup}
 \end{figure}
-
+\clearpage
+\subsection{Atari Breakout}
+U igri Breakout postoji loptica koja kreće iz sredine ekrana i pada na dole. Agent upravlja palicom na dnu ekrana
+kojom odbija lopticu ka gore. Na vrhu ekrana nalaze se cigle koje se unište kada loptica udari u njih. Cigle
+su različite boje i vrede različiti broj poena. Loptica se odbija drugačije u zavisnosti u koji deo palice udari.
+Cilj je uništiti sve cigle. Agent ima 5 života.\\
+Agent preciznije ima 4 moguće akcije: ništa, ispali lopticu (na početku igre), pomeri palicu levo i desno.
+Stanje koje agent dobija od okruženja je slika dimenzija $210 \times 160 \times 3$.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=1]{../graph-visuals/breakout/breakout_sample.png}
+	\caption{Primer stanja u okruženju Atari Breakout}
+\end{figure}
+Slika je jednostavno predprocesirana tako što je pretvorena u crno-belu (monohromatsku) sliku i 
+rezolucija smanjena na $84 \times 84$. Pa je rezultujuća slika dimenzija $84 \times 84 \times 1$.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=2]{../graph-visuals/breakout/breakout_sample_preprocess.png}
+	\caption{Primer stanja u okruženju Atari Breakout nakon predprocesiranja}
+\end{figure}\\
+Mreža korišćena za rešavanje ove igre je konvoluciona mreža sa 3 konvoluciona sloja:
+\begin{enumerate}
+	\item 32 filtera dimenzija $8 \times 8$, sa korakom 4, ReLU
+ 	\item 64 filtera dimenzija $4 \times 4$, sa korakom 2, ReLU
+  	\item 64 filtera dimenzija $3 \times 3$, sa korakom 1, ReLU
+\end{enumerate}
+Nakon konvolucionih slojeva dodat je jedan sloj od 512 neurona praćen ReLU aktivacionom funkcijom.
+Izlazni sloj ima 4 neurona, koliko i akcija. U kodu je ova arhitektura definisana na sledeći način:
+\begin{minted}{python}
+dqn_architecture = [
+    torch.nn.Conv2d(in_channels=4, out_channels=32, kernel_size=8, stride=4),
+    torch.nn.ReLU(),
+    torch.nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2),
+    torch.nn.ReLU(),
+    torch.nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
+    torch.nn.ReLU(),
+    torch.nn.Flatten(),
+    torch.nn.Linear(3136, 512),
+    torch.nn.ReLU(),
+    torch.nn.Linear(512, env.action_space.n)
+]
+\end{minted}
 \renewcommand\bibname{ Literatura}
  \addcontentsline{toc}{chapter}{ Literatura}
-\latin
 \printbibliography[title=Literatura]
 \medskip
 

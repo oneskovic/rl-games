@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{dqn\PYGZus{}architecture} \PYG{o}{=} \PYG{p}{[}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Conv2d}\PYG{p}{(}\PYG{n}{in\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{out\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{32}\PYG{p}{,} \PYG{n}{kernel\PYGZus{}size}\PYG{o}{=}\PYG{l+m+mi}{8}\PYG{p}{,} \PYG{n}{stride}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{ReLU}\PYG{p}{(),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Conv2d}\PYG{p}{(}\PYG{n}{in\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{32}\PYG{p}{,} \PYG{n}{out\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{64}\PYG{p}{,} \PYG{n}{kernel\PYGZus{}size}\PYG{o}{=}\PYG{l+m+mi}{4}\PYG{p}{,} \PYG{n}{stride}\PYG{o}{=}\PYG{l+m+mi}{2}\PYG{p}{),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{ReLU}\PYG{p}{(),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Conv2d}\PYG{p}{(}\PYG{n}{in\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{64}\PYG{p}{,} \PYG{n}{out\PYGZus{}channels}\PYG{o}{=}\PYG{l+m+mi}{64}\PYG{p}{,} \PYG{n}{kernel\PYGZus{}size}\PYG{o}{=}\PYG{l+m+mi}{3}\PYG{p}{,} \PYG{n}{stride}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{ReLU}\PYG{p}{(),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Flatten}\PYG{p}{(),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Linear}\PYG{p}{(}\PYG{l+m+mi}{3136}\PYG{p}{,} \PYG{l+m+mi}{512}\PYG{p}{),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{ReLU}\PYG{p}{(),}
+    \PYG{n}{torch}\PYG{o}{.}\PYG{n}{nn}\PYG{o}{.}\PYG{n}{Linear}\PYG{p}{(}\PYG{l+m+mi}{512}\PYG{p}{,} \PYG{n}{env}\PYG{o}{.}\PYG{n}{action\PYGZus{}space}\PYG{o}{.}\PYG{n}{n}\PYG{p}{)}
+\PYG{p}{]}
+\end{Verbatim}
