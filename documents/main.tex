@@ -48,6 +48,8 @@ style=apa,
 sorting=ynt
 ]{biblatex}
 \DeclareLanguageMapping{serbian}{serbian-apa}
+\addbibresource{references.bib}
+
 
 \usepackage[font=small,labelfont=bf]{caption}
 
@@ -98,9 +100,11 @@ sorting=ynt
 \DeclareMathOperator{\EX}{\mathbb{E}}% expected value
 
 \renewcommand*{\proofname}{Dokaz}
+\renewcommand*{\contentsname}{Sadržaj}
 %\renewcommand*{\refname}{Literatura}
 \addto\captionsenglish{\renewcommand{\figurename}{Slika}}
 \addto\captionsenglish{\renewcommand{\tablename}{Tabela}}
+\addto\captionsenglish{\renewcommand{\contentsname}{Sadržaj}}
 
 \theoremstyle{definition}
 
@@ -108,56 +112,49 @@ sorting=ynt
 \def\zn{,\kern-0.09em,}
 \def\zng{'\kern-0.09em'}
 \pagenumbering{roman}
-\addbibresource{references.bib}
 
 \begin{document}
-% \thispagestyle{empty}
-% \textcolor{white}{proba}
-% \clearpage
-
-\thispagestyle{empty}
-
+\begin{titlepage}
+	
 \begin{center}
-{\LARGE Ra\ch unarska gimnazija}
-\end{center}
-\vspace*{50mm}
+	{\LARGE Ra\ch unarska gimnazija}
+	\end{center}
+	\vspace*{50mm}
+	
+	\begin{center}
+	{\huge MATURSKI RAD}
+	
+	\vspace*{8pt}
+	{\Large Napredne tehnike programiranja}
+	\end{center}
+	
+	\vspace*{10pt}
+	\begin{center}
+	{\LARGE Primena u\ch enja sa podsticajem za re\sh avanje Atari igara}
+	\end{center}
+	
+	\vspace*{70mm}
+	\setlength{\columnsep}{50pt}
+	\begin{multicols}{2}
+	 {\noindent \Large Učenik:
+	\\Ognjen Ne\sh ković}
+	
+	
+	{ \noindent \hfill \Large Mentor:\\
+	\hfill \phantom{aaaaaaaaa}  dr Filip Marić}
+	\end{multicols}
+	
+	\vfill
+	\begin{center}
+	{\Large Beograd, maj 2022.}
+	\end{center}
+\end{titlepage}
 
-\begin{center}
-{\huge MATURSKI RAD}
-
-\vspace*{8pt}
-{\Large Napredne tehnike programiranja}
-\end{center}
-
-\vspace*{10pt}
-\begin{center}
-{\LARGE Primena u\ch enja sa podsticajem za re\sh avanje Atari igara}
-\end{center}
-
-\vspace*{70mm}
-\setlength{\columnsep}{50pt}
-\begin{multicols}{2}
- {\noindent \Large Učenik:
-\\Ognjen Ne\sh ković}
-
-
-{ \noindent \hfill \Large Mentor:\\
-\hfill \phantom{aaaaaaaaa}  dr Filip Marić}
-\end{multicols}
-
-\vfill
-\begin{center}
-{\Large Beograd, maj 2022.}
-\end{center}
-
-\newpage
-
+\tableofcontents
+\clearpage
 \pagenumbering{arabic}
 \renewcommand{\chaptername}{}
 \setcounter{page}{1}
-\thispagestyle{plain}
-{\Large Sa\zh etak}\\ 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 \chapter[Uvod]{Uvod}
 \thispagestyle{plain}
@@ -313,7 +310,7 @@ Možemo zapisati izraz kao:
 \[
 	E_r(t) = E_r(t-1) + \gamma^{t-1}\vec{L(t)} \cdot \vec{c}
 \]  
-Pa je lako videti da je:
+Lako je videti da je:
 \[
 	\begin{split}
 	E_r(t) &= \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i)} \cdot \vec{c}\\
@@ -323,7 +320,7 @@ Pa je lako videti da je:
 \medskip
 Za aciklične Markovljeve lance, odnosno za aperiodične matrice $T$ izračunavanje $E_r(t)$ za dovoljno veliko $t$ je dovoljno za nalaženje očekivane nagrade.
 Međutim za periodične matrice $T$ je potrebno pokazati da $\lim_{t \to \infty}{E_r(t)}$ postoji.
-\lem $\lim_{t \to \infty}{E_r(t)} = \text{const}$\\
+\lem $(\exists a) \lim_{t \to \infty}{E_r(t)} = a$\\
 Ako se u izraz $E_r(t) = \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i-1)}$ zameni definicija za $\vec{L(i)}$ dobija se sledeći izraz:
 \[
 	\begin{split}
@@ -331,7 +328,7 @@ Ako se u izraz $E_r(t) = \vec{c} \cdot \sum_{i=1}^{t}\gamma^{i-1}\vec{L(i-1)}$ z
 	E_r(t) &= \vec{c} \cdot \left( \vec{L_0} \cdot \sum_{i=1}^{t}\gamma^{i-1}T^{i-1}\right)\\
 	\end{split}
 \]
-Uvedimo matricu $A = \gamma T$. Pa je prethodni izraz jednak: \\
+Uvedimo matricu $A = \gamma T$, pa je prethodni izraz jednak: \\
 \[
 	\begin{split}
 	E_r(t) &= \vec{c} \cdot \left( \vec{L_0} \cdot \sum_{i=1}^{t}A^i \right)\\
@@ -340,7 +337,7 @@ Uvedimo matricu $A = \gamma T$. Pa je prethodni izraz jednak: \\
 Potrebno je naći $\lim_{t \to \infty}{E_r(t)} = \vec{c} \cdot \left( \vec{L_0}\cdot \zbtg A^t \right)$\\
 $\zbtg A^t$ je Nojmanov red primenjen na prostor $R^n$.\\
 Dovoljan uslov za konvergenciju Nojmanovog reda je da postoji norma tako da važi $||A|| < 1$.\\
-Najlakše je odabrati $||A||_{\infty}$. Pa je lako videti da:
+Najlakše je odabrati $||A||_{\infty}$. Lako je videti da:
 \[
 	\begin{split}
 	||A||_{\infty} &= \max_{i}\sum_{j}|A_{i,j}|\\
@@ -362,14 +359,14 @@ Može se uvesti Belmanov operator očekivanja za stacionarnu determinističku po
 	B^{\pi}(V)_s = \sum_{s'}T(S,\pi(S),S')(R(S,\pi(S),S')+\gamma V(S'))
 \]
 ili slično i za nedeterminističke politike. Može se pokazati (\cite{puterman2014markov}) da je Belmanov operator očekivanja kontrakcija na datom prostoru.
-Pa postoji stacionarna tačka $B^{\pi}(x) = x$. Dokazuje se (\cite{puterman2014markov}) da je tačka $x$ upravo $V^{\pi}$.
+Stoga postoji stacionarna tačka $B^{\pi}(x) = x$. Dokazuje se (\cite{puterman2014markov}) da je tačka $x$ upravo $V^{\pi}$.
 Sličan dokaz će detaljnije biti izložen za algoritam optimizacije vrednosti.
 \section{Optimizacija vrednosti (value iteration)}
 Uvedimo notaciju za očekivanu vrednost koja se može ostvariti iz stanja (funkciju vrednosti stanja) $s$ ako se prati neka stacionarna, deterministička politika $\pi$:
 \[
 	V^{\pi}(s) = \sum_{s'}T(s,\pi(s),s')R(s,\pi(s),s') + \gamma V^{\pi}(s')
 \]
-Primetimo da sa obzirom da je funkcija $V$ diskretna, a broj stanja konačan možemo reći da se sve funkcije vrednosti stanja
+Primetimo da sa obzirom da je funkcija $V$ diskretna, a broj stanja konačan, možemo reći da se sve funkcije vrednosti stanja
 nalaze u Banahovom prostoru $R^{|S|}$ gde je $S$ skup svih mogućih stanja. Dodatno u ovom prostoru uzećemo beskonačno normu
 $||v||_{\infty} := \text{max}(|v_{1}|,|v_{2}|,...,|v_{n}|)$.
 Algoritam optimizacije funkcije vrednosti stanja nalazi funkciju stanja $V^{*}(s)$ koja predstavlja maksimalnu moguću
@@ -396,7 +393,7 @@ Analogno za $U_s$
 \[	B^*(U)_s = \sum_{s'}T(s,a_2,s')(R(s,a_2,s')+\gamma U_{s'}) \]
 Pošto akcija $a_2$ maksimizuje prethodnu sumu važi sledeća nejednakost:
 \[	B^*(U)_s \geq \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma U_{s'}) \]
-Pa za razliku $B^*(V)_s - B^*(U)_s$ važi nejednakost:
+Stoga za razliku $B^*(V)_s - B^*(U)_s$ važi nejednakost:
 \[ 
 	\begin{split}
 		B^*(V)_s - B^*(U)_s &\leq \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma V_{s'}) - \sum_{s'}T(s,a_1,s')(R(s,a_1,s')+\gamma U_{s'})\\
@@ -461,7 +458,7 @@ Na osnovu monotonosti operatora $B^*$ može se primeniti operator $B^*$ na desnu
 \]
 Pošto je $B^*$ kontrakcija, a $V^*$ stacionarna tačka za $B^*$ važi:
 \[ \lim_{k \to \infty}(B^*)^k(V)_s = V^*_s \]
-Pa je nejednakost ekvivalentna:
+Nejednakost je onda ekvivalentna:
 \[ V^*_s < V^*_s \]
 Što je kontradikcija, čime je dokazana početna lema.
 \medskip \\
@@ -498,7 +495,7 @@ Primetimo da se data suma može razdvojiti:
 Dodatno, primetimo da je $\sum_{s'}T(s,a,s')R(s,a,s')$ očekivana vrednost nagrade iz stanja $s$, kada se izvrši akcija $a$, odnosno:
 $\sum_{s'}T(s,a,s')R(s,a,s') = \mathbb{E}(R | s,a)$.
 Slično, suma $\sum_{s'}T(s,a,s') V_{s'}$ je očekivana vrednost buduće nagrade, odnosno:
-$\sum_{s'}T(s,a,s')\gamma V_{s'} = \gamma \mathbb{E}(V | s, a)$. Pa se Belmanov operator može ekvivalentno zapisati kao:
+$\sum_{s'}T(s,a,s')\gamma V_{s'} = \gamma \mathbb{E}(V | s, a)$. Belmanov operator se onda može ekvivalentno zapisati kao:
 \[ 	B^{\pi}(V)_s = \mathbb{E}(R | s,a) + \gamma \mathbb{E}(V | s, a) \]
 U cilju aproksimacije potrebnih očekivanih vrednosti biće dokazane sledeće leme:
 \lem {Za red $E_n = \frac{1}{n+1}(n E_{n-1} + x_n), E_0 = x_0$ važi $E_n = \frac{1}{n+1}\sum_{i=0}^n x_i$}\\
@@ -526,11 +523,11 @@ Prvo je dokazana ekvivalencija sa jednostavnijim redom:
 		E_n &=  \frac{1}{n+1}(n E_{n-1} + x_n)
 	\end{split}
 \]
-Pa zajedno sa prethodnom lemom sledi:
+Zajedno sa prethodnom lemom sledi:
 \[E_n = \frac{1}{n+1}\sum_{i=0}^n x_i\]
 Primetimo da je izraz $\frac{1}{n+1}\sum_{i=0}^n x_i$ srednja vrednost uzorka $x_0, x_1, ... , x_n$. Odnosno:
 \[E_n = \frac{1}{n+1}\sum_{i=0}^n x_i = \overline{X_n}	\]
-Pa se početno tvrđenje svodi na:
+Čime se početno tvrđenje svodi na:
 \[ \lim_{n \to \infty} \overline{X_n} = \mathbb{E}(X) \]
 Što je tvrdnja zakona velikih brojeva.
 \medskip \\
@@ -562,14 +559,14 @@ Sa obzirom da su $Q$ funkcija i $V$ funkcija povezane sledećom jednakosti:
 \[ V^{\pi}(s) = \sum_a \pi(a | s)Q^{\pi}(s,a) \]
 Za politiku $\piopt$ važi:
 \[ V^{\piopt}(s) = \max_a Q^{\piopt}(s,a) \]
-Pa se jednačina za $Q^*$ može zapisati ekvivalentno na sledeći način:
+Stoga se jednačina za $Q^*$ može zapisati ekvivalentno na sledeći način:
 \[
 	Q^*(s,a) = \sum_{s'} T(s,a,s')(R(s,a,s') + \gamma V^{\piopt}(s'))
 \]
 Stoga je jasno da ako su date vrednosti optimalne funkcije $V^*$ odmah su date i vrednosti optimalne $Q$ funkcije $Q^*$.
 Što opravdava uvođenje algoritma optimizacije $Q$ vrednosti koji je analogan prethodnom algoritmu učenja optimalne vrednosti stanja $V^*$.
 \[ Q(s,a) \leftarrow \sum_{s'}T(s,a,s')(R(s,a,s')+\gamma \text{max}_{a'}Q(s',a')) \]
-Pa zatim i stohastička verzija tog algoritma:\\
+Zatim sledi i stohastička verzija tog algoritma:\\
 Ako je data epizoda: $E: s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$\\
 Onda je u iteraciji $n$, za svako $s$ i svako $a$:\\
 \[ 
@@ -621,7 +618,7 @@ Algoritam gradijentnog spusta zasniva se na nalaženju nule gradijenta funkcije 
 \[ \nabla L(Y,f(x,w_0,w_1,...,w_n,b_0,b_1,...,b_n)) = 0 \]
 Odnosno nuli parcijalnih izvoda:
 \[ \forall(i \in \{0,1,...,n\}) \frac{\partial L}{\partial W_i} = 0, \frac{\partial L}{\partial b_i} = \vec{0} \]
-Eksplicitno nalaženje nula parcijalnih izvoda je često veoma velike složenost ili nemoguće. Pa se u praksi pribegava korišćenju
+Eksplicitno nalaženje nula parcijalnih izvoda je često veoma velike složenost ili nemoguće. Zato se u praksi pribegava korišćenju
 numeričkih metoda za aproksimaciju nula. Osnovni algoritam gradijentnog spusta čini sledeća jednačina:
 \[
 	\begin{split}
@@ -662,9 +659,9 @@ kros-korelacija filtera i ulazne slike.
     \includegraphics[scale=0.4]{../graph-visuals/conv-filter.png}
 	\caption{Primer konvolucionog sloja}
 \end{figure}\\
-Najčešće ulazna slika ima dubinu veću od 1. Pa se najčešće za jedan filter računa konvolucija sa čitavom dubinom slike.
+Najčešće ulazna slika ima dubinu veću od 1. Zbog toga se najčešće za jedan filter računa konvolucija sa čitavom dubinom slike.
 Na primer ako je ulazna slika dimenzije $(100 \times 100 \times 3)$ ako se uzme filter $(5 \times 5)$ za konvoluciju bio bi 
-dubine takođe 3. Tj. dimenzija $(5 \times 5 \times 3)$. Takođe konvolucioni sloj ima nekoliko različitih filtera pa se za svaki od
+dubine takođe 3 tj. dimenzija $(5 \times 5 \times 3)$. Takođe konvolucioni sloj ima nekoliko različitih filtera pa se za svaki od
 filtera računaju konvolucije, time se dobija dubina u izlazu tog sloja (na primer na slici iznad postoji 5 filtera pa je izlaz dubine 5).
 Konvolucioni sloj takođe određuje veličina koraka (tj. \textit{stride}). Stride predstavlja za koliko se filter pomeri prilikom računanja
 proizvoda sa ulaznom slikom. 
@@ -703,7 +700,7 @@ se igralo optimalno. Nada je da ukoliko se koristi model sposoban da dovoljno ap
 prepozna slična stanja i izgradi optimalnu politiku nad samo neophodnim informacijama. Međutim, aproksimacija $Q$ funkcije pomoću
 nelinearnog modela je težak problem koji je tek skorije u nekoj meri rešen. Poznate su situacije gde nelinearni aproksimatori
 $Q$ funkcije ne konvergiraju na optimalnu $Q$ vrednost, šta više divergiraju u potpunosti (\cite{NEURIPS2018_5fd0245f}). 
-Međutim ukoliko se $Q$ funkcija aproksimira neuronskom mrežom i treniranje se vrši na specifičan način u praksi je često moguće dobiti
+Međutim, ukoliko se $Q$ funkcija aproksimira neuronskom mrežom i treniranje se vrši na specifičan način u praksi je često moguće dobiti
 veoma dobre rezultate.\\
 Kako bi se aproksimirala $Q$ funkcija posmatrajmo jednačinu za stohastičku verziju nalaženja optimalne $Q$ vrednosti:\\
 Ako je data epizoda: $E: s_0,a_0,r_0,s_1,a_1,r_1,...,s_n,a_n,r_n$\\
@@ -725,15 +722,15 @@ Ili u alternativnoj, ekvivalentnoj formulaciji:
 \]
 Vrednost $r_n + \gamma \text{max}_{a'}Q_{n-1}(s',a') - Q_{n-1}(s,a)$ naziva se TD-greška (temporal difference error). Ako se ovo
 posmatra kao vrednost koju treba minimizovati može se upotrebiti neuronska mreža na sledeći način:
-Preformulišimo $Q$ funkciju kao neuronsku mrežu, sa parametrima $\theta$ odnosno $Q(s,a,\theta)$. Pa je TD greška ekvivalentna:
+Preformulišimo $Q$ funkciju kao neuronsku mrežu, sa parametrima $\theta$ odnosno $Q(s,a,\theta)$. Onda je TD greška ekvivalentna:
 \[L_n(\theta_n) = (r_n + \gamma \text{max}_{a'}Q(s'_n,a',\theta_{n}) - Q(s_n,a_n,\theta_{n}))^2 \]
 Učenje teče isto kao i za normalne neuronske mreže tako što se za svaki uzorak $(s_n,a_n,r_n,s_n')$ parametri mreže menjaju na sledeći način:
 \[ \theta_n = \theta_{n-1} - \eta  \nabla L_n(\theta_{n-1}) \]
 \medskip\\
 Ovako formulisano učenje međutim nije preterano uspešno. Ako se učenje posmatra kao regresija i vrednost $r_n + \gamma \text{max}_{a'}Q(s'_n,a',\theta_{n})$ 
-kao vrednost koju treba predvideti vidi se da se premenljiva koju treba predvideti veoma često menja što destabilizuje učenje, takođe
+kao vrednost koju treba predvideti vidi se da se promenljiva koju treba predvideti veoma često menja što destabilizuje učenje, takođe
 pokazano je da ovakav način učenja često precenjuje vrednost nagrade (\cite{van2016deep}) pa
-se u praksi fiksiraju dva seta paramatara $\theta$ i $\theta'$. Funkcija gubitka se definiše kao:
+se u praksi fiksiraju dva seta parametara $\theta$ i $\theta'$. Funkcija gubitka se definiše kao:
 \[L_n(\theta_n) = (r_n + \gamma \text{max}_{a'}Q(s'_n,a',\theta_n') - Q(s_n,a_n,\theta_n))^2 \]
 Na neki fiksan broj koraka se parametri mreže $\theta'$ postavljaju na vrednost parametara $\theta$.
 Takođe moguće je i formulisati funkciju gubitka na sledeći način kako bi se izbeglo precenjivanje nagrade:
@@ -746,7 +743,7 @@ u velik niz iskustava odakle se prilikom treniranja biraju nasumične četvorke 
 \textit{experience replay} (\cite{mnih2015human}).
 \chapter{Implementacija i rezultati ekperimenata}
 U okviru rada implementiran je algoritam Deep Q-learning. Algoritam je zatim primenjen za rešavanje problema optimalne kontrole
-\textit{Cartpole swing-up}, a zatim i dve Atari igre: \textit{Pong} i \textit{Video Pinball}. Neuronske mreže implementirane su
+\textit{Cartpole swing-up}, a zatim i Atari igru \textit{Breakout}. Neuronske mreže implementirane su
 pomoću biblioteke \textit{PyTorch} (\cite{NEURIPS2019_9015}), a okruženja sa kojima agent interaguje su deo standardne
 implementacije \textit{OpenAI gym} (\cite{1606.01540}).
 \section{Memorija (replay buffer)}
@@ -890,10 +887,10 @@ U problemu cartpole swingup agent upravlja kolicima za koje je zglobno fiksirana
 	\begin{table}[!ht]
 		\begin{tabular}{|l|l|l|l|}
 		\hline
-		 & \textbf{Vredost} & \textbf{Minimum}  & \textbf{Maksimum}\\ \hline
+		 & \textbf{Vrednost} & \textbf{Minimum}  & \textbf{Maksimum}\\ \hline
 		1 & Pozicija kolica & $-4.8$ & $4.8$\\ \hline
 		2 & Brzina kolica & $-\infty$ & $\infty$\\ \hline
-		3 & Ugao šipke & $~ -0.418 \text{ rad}$ & $~ 0.418 \text{ rad}$\\ \hline
+		3 & Ugao šipke & $\approx -0.418 \text{ rad}$ & $\approx 0.418 \text{ rad}$\\ \hline
 		4 & Ugaona brzina šipke & $-\infty$ & $\infty$\\ \hline
 		\end{tabular}
 		\caption{Stanje koje agent dobija od okruženja Cartpole swingup}	
@@ -926,7 +923,7 @@ Stanje koje agent dobija od okruženja je slika dimenzija $210 \times 160 \times
 	\caption{Primer stanja u okruženju Atari Breakout}
 \end{figure}
 Slika je jednostavno predprocesirana tako što je pretvorena u crno-belu (monohromatsku) sliku i 
-rezolucija smanjena na $84 \times 84$. Pa je rezultujuća slika dimenzija $84 \times 84 \times 1$.
+rezolucija smanjena na $84 \times 84$. Rezultujuća slika je onda dimenzija $84 \times 84 \times 1$.
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[scale=2]{../graph-visuals/breakout/breakout_sample_preprocess.png}
@@ -954,10 +951,45 @@ dqn_architecture = [
     torch.nn.Linear(512, env.action_space.n)
 ]
 \end{minted}
-\renewcommand\bibname{ Literatura}
- \addcontentsline{toc}{chapter}{ Literatura}
+Model uspešno igra igru Atari Breakout i dostiže nagradu od $\approx 200$.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[scale=0.4]{../graph-visuals/breakout/plot.pdf}
+	\caption{Nagrada tokom treniranja na igri Atari Breakout}
+\end{figure}
+\begin{table}[]
+	\begin{tabular}{|l|l|l|p{7cm}|}
+	\hline
+	\textbf{Hiperparametar} & \textbf{Cartpole} & \textbf{Breakout}  & \textbf{Opis}  \\ \hline
+	total\textunderscore train\textunderscore steps         & 100 000    		& 5 000 000     	&  Ukupan broj koraka za treniranje \\ \hline
+	max\textunderscore buffer\textunderscore len            & 10 000    		& 100 000       	&  Najveći broj četvorki $(s,a,r,s')$ koji se mogu naći u baferu    \\ \hline
+	learning\textunderscore starts		 	                & 500    			& 5 000         	&  Nakon koliko koraka potpuno nasumičnog igranja počinje učenje \\ \hline
+	target\textunderscore update\textunderscore freq        & 3000    			& 10 000        	&  Broj koraka nakon kog se kopiraju parametri trenutne mreže u ciljnu mrežu   \\ \hline
+	batch\textunderscore size				                & 32    			& 32            	&  Broj uzoraka (četvorki $(s,a,r,s')$) na kojima se trenira mreža        		\\ \hline
+	gamma					                                & 0.99    			& 0.99          	&  \textit{Discount factor} - vrednost kojom se množi buduća nagrada        \\ \hline
+	eps 					                                & 1.0    			& 1.0           	&  Početna vrednost $\epsilon$ korišćena u $\epsilon$-greedy politici        		\\ \hline
+	eps\textunderscore min 				                    & 0.1    			& 0.1           	&  Minimalna vrednost $\epsilon$        		\\ \hline
+	eps\textunderscore decay 				                & 0.9998    		& 0.999997      	&  Vrednost kojom se množi trenutno $\epsilon$ nakon svakog koraka treniranja        		\\ \hline
+	learning\textunderscore rate			                & 0.00025    		& 0.00025       	&  Hiperparametar za Adam        		\\ \hline
+	
+	\end{tabular}
+	\caption{Vrednosti hiperparametara korišćenih za eksperimente Cartpole i Breakout}
+\end{table}
+\let\cleardoublepage\clearpage
+\chapter{Zaključak}
+U radu su izložene metode učenja sa podsticajem od jednostavnijih ka složenijim. Dokazane su najznačajnije teoreme vezane za algoritme
+optimizacije funkcije vrednosti stanja i evaluacije politike. Pokazano je u kakvim Markovljevim procesima se mogu
+koristiti klasični algoritmi poput optimizacije vrednosti, a kada je potrebno posegnuti za ozbiljnijim metodama. \\
+Za rešavanje većih i nepoznatih Markovljevih procesa uvedene su stohastičke metode za koje su izloženi neki osnovni dokazi i intuicija.
+U svrhu aproksimacije Q funkcije su sažeto uvedene potpuno povezane i konvolucione neuronske mreže. Pokazana je njihova primena
+za aproksimaciju Q funkcije, a zatim je to praktično primenjeno za rešavanje problema optimalne kontrole Cartpole swingup, pa i
+konačno za rešavanje igre Atari Breakout.\\
+Ovim su ukratko izložene savremenije metode učenja sa podsticajem. Pokazano je da se one mogu jednostavno implementirati
+i trenirati da rešavaju izuzetno složene i visokodimenzione probleme pomoću relativno pristupačnog hardvera. Međutim, treba
+napomenuti da se polje mašinskog učenja razvija izuzetno brzo i da su algoritmi izloženi u ovom radu, iako impresivni, već
+značajno nadograđeni i u praksi se više ne koriste samo izvorne verzije algoritma Deep Q-learning kao što je on ovde dat.
+Svakako, Deep Q-learning kao što je predstavljen u ovom radu čini osnovu većine trenutno najboljih algoritama za učenje sa podsticajem.
 \printbibliography[title=Literatura]
-\medskip
 
 
 \end{document}
